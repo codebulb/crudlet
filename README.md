@@ -9,6 +9,11 @@ Use [JitPack](https://jitpack.io/) to add its dependency to your Maven web appli
     <artifactId>crudlet</artifactId>
     <version>0.1_RC-1</version>
 </dependency>
+...
+<repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+</repository>
 ```
 Replace the version by the tag / commit hash of your choice or `-SNAPSHOT` to get the newest SNAPSHOT.
 
@@ -35,14 +40,14 @@ Define your database connection in the persistence.xml file. Any JDBC compliant 
 
 #### CORS
 Crudlet by default allows you to handle CORS request without nasty errors as is usually desired in development / debug stage. The required request / response filters are implemented in the `CorsRequestFilter` and `CorsResponseFilter` class, respectively.
-Set the `CorsRequestFilter#ALLOW_OPTIONS` and `CorsResponseFilter# ALLOW_CORS` boolean flag to false (e.g. in a `@Startup` `@Singleton` EJB bean) to disable CORS allow-all policy.
+Set the `CorsRequestFilter#ALLOW_OPTIONS` and `CorsResponseFilter#ALLOW_CORS` boolean flag to false (e.g. in a `@Startup` `@Singleton` EJB bean) to disable CORS allow-all policy.
 
 ### Server: Implementation
-Crudlet provides a simple, lean framework to build (optionally RESTful) CRUD JSF applications based on common best practices. Having a basic CRUD implementation in place means that you can an any entity type:
-* *Create (C)* new entities
-* *Read (R)* persistent entities from the persistence storage
-* *Update (U)* entities in the persistence storage
-* *Delete (D)* entities from the persistence storage
+Crudlet provides a simple, lean framework to build REST-to-SQL web applications based on common best practices. Having a basic CRUD implementation in place means that you can an any entity type:
+* **Create (C)** new entities
+* **Read (R)** persistent entities from the persistence storage
+* **Update (U)** entities in the persistence storage
+* **Delete (D)** entities from the persistence storage
 
 Building your application around a CRUD centric approach brings a couple of advantages:
 * The service interface is very simplistic, lean and self-documenting
@@ -101,7 +106,7 @@ public class CustomerService extends CrudService<Customer> {
     }
 }
 ```
-* Within the setEm(EntityManager) method, simply call the super method. The important part is that you inject your `@PersistenceContext` in this method by annotation.
+* Within the `setEm(EntityManager)` method, simply call the super method. The important part is that you inject your `@PersistenceContext` in this method by annotation.
 
 Of course, you are free to add additional methods to your `CrudService` implementation where reasonable.
 
@@ -125,21 +130,21 @@ public class CustomerResource extends CrudResource<Customer> {
 * The `@Path` defines the base path of the web service endpoint.
 * Within the `getService()` method, return the concrete `CrudService` for the entity type in question which you should dependency-inject into the controller.
 
-That’s it. Now you can use e.g. the `httpie` command line tool to verify that you can execute RESTful CRUD operations on your entity running on the database.
+That’s it. Now you can use e.g. the [httpie](https://github.com/jkbrzt/httpie) command line tool to verify that you can execute RESTful CRUD operations on your entity running on the database.
 
 Of course, you are free to add additional methods to your `CrudResource` implementation where reasonable.
 
 Read on for an example client implementation based on AngularJS.
 
 ### AngularJS client: Setup
-In this example, we use Restangular as an abstraction layer to do RESTful HTTP requests which offers a far more sophisticated although more concise API than AngularJS’s built-in `$http` and `$resource`. It is set up as shown in the demo application’s main JavaScript file:
+In this example, we use [Restangular](https://github.com/mgonto/restangular) as an abstraction layer to do RESTful HTTP requests which offers a far more sophisticated although more concise API than AngularJS’s built-in `$http` and `$resource`. It is set up as shown in the demo application’s main JavaScript file:
 ```
 .config(function (RestangularProvider) {
 	RestangularProvider.setBaseUrl('http://localhost:8080/CrudletDemo.server/');
 })
 ```
 
-You also potentially want to install and setup the angular-translate module for I18N support:
+You also potentially want to install and setup the [angular-translate](http://angular-translate.github.io/) module for I18N support:
 ```
 .config(['$translateProvider', function ($translateProvider) {
 	$translateProvider.translations('en', translations);
@@ -183,7 +188,7 @@ Using the angular-translate module of AngularJS we set up previously, we can sho
 	</ul>
 </div>
 ```
-The `error.<property>.messageTemplate` part is the message template returned by the bean validation constraint. We can thus e.g. base the validation error localization on Hibernate’s own validation messages:
+The `error.<property>.messageTemplate` part is the message template returned by the bean validation constraint. We can thus e.g. base the validation error localization on [Hibernate’s own validation messages](http://grepcode.com/file/repo1.maven.org/maven2/org.hibernate/hibernate-validator/5.1.3.Final/org/hibernate/validator/ValidationMessages.properties/):
 ```
 var translations = {
     ...
@@ -199,23 +204,23 @@ ng-class="{'has-error': errors.amount != null}"
 ```
 
 ## By example
-For a complete example, please take a look at the example application. It also shows you how to easily implement a `CrudResource` for nested resources.
+For a complete example, please take a look at the [**example application**](https://github.com/codebulb/crudletdemo). It also shows you how to easily implement a `CrudResource` for nested resources.
 
-If you want to lean more about building RESTful web applications based on vanilla JAX-RS and Restangular, you may enjoy a blog post I’ve written about it; it features a complete example application as well.
+If you want to lean more about building RESTful web applications based on vanilla JAX-RS and Restangular, you may enjoy a [blog post I’ve written about it](http://www.codebulb.ch/2015/09/restful-software-requirements-specification-part-1.html); it features a complete example application as well.
 
 ## Specification
 Crudlet supports these HTTP to persistence storage operations:
 
-* GET /contextPath/model: service#findAll()
+* `GET /contextPath/model`: `service#findAll()`
   * Searches for all entities of the given type.
   * returns HTTP 200 OK with list of entities
-* GET /contextPath/model/\:id: service#findById(id)
+* `GET /contextPath/model/:id`: `service#findById(id)`
   * Searches for the entities of the given type with the given id.
   * returns HTTP 200 OK with entity if found; or HTTP 404 NOT FOUND if entity is not found.
-* PUT /contextPath/model/ with entity or PUT /contextPath/model/:id with entity or POST /contextPath/model/ with entity or POST   * /contextPath/model/:id with entity: service#save(entity)
+* `PUT /contextPath/model/` with entity or `PUT /contextPath/model/:id` with entity or `POST /contextPath/model/` with entity or POST `/contextPath/model/:id` with entity: `service#save(entity)`
   * Saves the entity for the first time or updates the existing entity, based on the presence of an id on the entity.
   * returns HTTP 200 OK with updated entity (e.g. new id) and Link header with content “/contextPath/model/:id”; or HTTP 400 BAD REQUEST with error information on validation error
-* DELETE /contextPath/model/:id or DELETE /contextPath/model/:id with entity: service#delete(id)
+* `DELETE /contextPath/model/:id` or `DELETE /contextPath/model/:id` with entity: `service#delete(id)`
   * Deletes the entity with the id provided
   * returns HTTP 204 NO CONTENT.
 
@@ -224,4 +229,4 @@ Crudlet is currently experimental. I’d like to make some stability updates bef
 
 This is a private project I’ve started for my own pleasure and usage and to learn more about building (Ajax) REST APIs, and I have no plans for (commercial) support.
 
-You may also find more information about this project on this accompanying blog post.
+You can also find more information about this project on its [**accompanying blog post**](http://www.codebulb.ch/2016/01/crudlet-ready-to-use-restangular-to-sql-crud-with-jax-rs.html).
