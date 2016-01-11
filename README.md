@@ -141,6 +141,15 @@ In this example, we use [Restangular](https://github.com/mgonto/restangular) as 
 ```
 .config(function (RestangularProvider) {
 	RestangularProvider.setBaseUrl('http://localhost:8080/CrudletDemo.server/');
+	
+	RestangularProvider.setRequestInterceptor(function(elem, operation) {
+		// prevent "400 - bad request" error on DELETE
+		// as in https://github.com/mgonto/restangular/issues/78#issuecomment-18687759
+		if (operation === "remove") {
+			return undefined;
+		}
+		return elem;
+	});
 })
 ```
 
