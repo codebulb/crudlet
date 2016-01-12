@@ -1,12 +1,13 @@
 package ch.codebulb.crudlet.webservice;
 
-import ch.codebulb.crudlet.model.RestfulPersistenceConstraintViolationException;
+import ch.codebulb.crudlet.model.exceptions.RestfulPersistenceValidationConstraintViolation;
 import ch.codebulb.crudlet.model.CrudIdentifiable;
 import ch.codebulb.crudlet.service.CrudService;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.validation.ConstraintViolationException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -52,8 +53,8 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
         try {
             entity = getService().save(entity);
             return Response.status(Response.Status.OK).entity(entity).header("Link", buildLinkMap(uri.getPath(), entity.getId())).build();
-        } catch (RestfulPersistenceConstraintViolationException ex) {
-            return ex.createResponse();
+        } catch (ConstraintViolationException ex) {
+            return new RestfulPersistenceValidationConstraintViolation(ex).createResponse();
         }
     }
     

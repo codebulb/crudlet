@@ -11,7 +11,6 @@ import javax.ws.rs.ext.Provider;
 @PreMatching
 // as in http://www.developerscrappad.com/1781/java/java-ee/rest-jax-rs/java-ee-7-jax-rs-2-0-cors-on-rest-how-to-make-rest-apis-accessible-from-a-different-domain/
 public class CorsRequestFilter implements ContainerRequestFilter {
-    
     public static boolean ALLOW_OPTIONS = true;
     
     @Override

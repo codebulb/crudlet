@@ -1,6 +1,5 @@
 package ch.codebulb.crudlet.service;
 
-import ch.codebulb.crudlet.model.RestfulPersistenceConstraintViolationException;
 import ch.codebulb.crudlet.model.CrudEntity;
 import ch.codebulb.crudlet.model.CrudIdentifiable;
 import java.io.Serializable;
@@ -8,7 +7,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.transaction.Transactional;
-import javax.validation.ConstraintViolationException;
 import javax.validation.constraints.NotNull;
 
 @Transactional(Transactional.TxType.REQUIRED)
@@ -62,8 +60,8 @@ public abstract class CrudService<T extends CrudIdentifiable> implements Seriali
      * Saves / Inserts / Updates the entity provided and returns the updated entity (e.g. updated {@link CrudEntity#getId()} field.<p/>
      * <b>Note:</b> It's important to continue to work with the newly returned, updated entity rather than with the original entity.
      */
-    public T save(@NotNull T entity) throws RestfulPersistenceConstraintViolationException {        
-        try {
+    public T save(@NotNull T entity) {        
+        
             if (entity.getId() == null) {
                     em.persist(entity);
             }
@@ -72,10 +70,7 @@ public abstract class CrudService<T extends CrudIdentifiable> implements Seriali
             }
             em.flush();
             return entity;
-        }
-        catch (ConstraintViolationException ex) {
-            throw new RestfulPersistenceConstraintViolationException(ex);
-        }
+        
     }
     
     /**
