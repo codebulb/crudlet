@@ -19,6 +19,12 @@ Replace the version by the tag / commit hash of your choice or `-SNAPSHOT` to ge
 
 Visit [JitPack’s docs](https://jitpack.io/docs/) for more information.
 
+## Why you should use it
+* **Get production-ready REST CRUD operations on your `@Entity` model in a few lines of code.**
+* Extremely small footprint (JAR <= 20KB), no dependencies other than plain Java EE 7.
+* Human-readable documentation (here and in the [API docs](http://codebulb.github.io/pages/crudlet/doc/)).
+* Free & Open source ([New BSD license](https://github.com/codebulb/crudlet/blob/master/LICENSE)).
+
 ## Usage
 Note: The **complete source code of an example application** (server and client) is available [in a separate GitHub repository](https://github.com/codebulb/crudletdemo).
 
@@ -276,4 +282,4 @@ Crudlet is currently experimental. I’d like to make some stability updates bef
 
 This is a private project I’ve started for my own pleasure and usage and to learn more about building (Ajax) REST APIs, and I have no plans for (commercial) support.
 
-You can also find more information about this project on its [**accompanying blog post**](http://www.codebulb.ch/2016/01/crudlet-ready-to-use-restangular-to-sql-crud-with-jax-rs.html).
+You can also find more information about this project on its [**accompanying blog post**](http://www.codebulb.ch/2016/01/crudlet-ready-to-use-restangular-to-sql-crud-with-jax-rs.html) and in the [**API docs**](http://codebulb.github.io/pages/crudlet/doc/).
