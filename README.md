@@ -17,11 +17,17 @@ Use [JitPack](https://jitpack.io/) to add its dependency to your Maven web appli
 ```
 Replace the version by the tag / commit hash of your choice or `-SNAPSHOT` to get the newest SNAPSHOT.
 
-Not using Maven? You can [download the JAR directly from JitPack’s servers](https://jitpack.io/com/github/codebulb/crudlet/0.1_RC-1/crudlet-0.1_RC-1.jar).
-
 Visit [JitPack’s docs](https://jitpack.io/docs/) for more information.
 
+## Why you should use it
+* **Get production-ready REST CRUD operations on your `@Entity` model in a few lines of code.**
+* Extremely small footprint (JAR <= 20KB), no dependencies other than plain Java EE 7.
+* Human-readable documentation (here and in the [API docs](http://codebulb.github.io/pages/crudlet/doc/)).
+* Free & Open source ([New BSD license](https://github.com/codebulb/crudlet/blob/master/LICENSE)).
+
 ## Usage
+Note: The **complete source code of an example application** (server and client) is available [in a separate GitHub repository](https://github.com/codebulb/crudletdemo).
+
 ### Server: Setup
 #### JAX-RS
 You need to setup the JAX-RS Application servlet in the web.xml file as shown in the demo project:
@@ -40,6 +46,7 @@ Define your database connection in the persistence.xml file. Any JDBC compliant 
 
 #### CORS
 Crudlet by default allows you to handle CORS request without nasty errors as is usually desired in development / debug stage. The required request / response filters are implemented in the `CorsRequestFilter` and `CorsResponseFilter` class, respectively.
+
 Set the `CorsRequestFilter#ALLOW_OPTIONS` and `CorsResponseFilter#ALLOW_CORS` boolean flag to false (e.g. in a `@Startup` `@Singleton` EJB bean) to disable CORS allow-all policy.
 
 ### Server: Implementation
@@ -130,7 +137,7 @@ public class CustomerResource extends CrudResource<Customer> {
 * The `@Path` defines the base path of the web service endpoint.
 * Within the `getService()` method, return the concrete `CrudService` for the entity type in question which you should dependency-inject into the controller.
 
-That’s it. Now you can use e.g. the [httpie](https://github.com/jkbrzt/httpie) command line tool to verify that you can execute RESTful CRUD operations on your entity running on the database.
+**That’s it.** Now you can use e.g. the [httpie](https://github.com/jkbrzt/httpie) command line tool to verify that you can execute RESTful CRUD operations on your entity running on the database.
 
 Of course, you are free to add additional methods to your `CrudResource` implementation where reasonable.
 
@@ -173,7 +180,7 @@ In the “controller” JavaScript file, we can use Restangular to access the RE
 An interesting aspect of Crudlet is its out-of-the-box support for localized validation error messages. If upon save, a validation error occurs, the server answers e.g. like this:
 ```
 {
-    "errors": {
+    "validationErrors": {
         "name": {
             "attributes": {
                 "flags": "[Ljavax.validation.constraints.Pattern$Flag;@1f414540",
@@ -189,15 +196,15 @@ An interesting aspect of Crudlet is its out-of-the-box support for localized val
 
 Using the angular-translate module of AngularJS we set up previously, we can show all localized validation messages like so:
 ```
-<div class="alert alert-danger" ng-show="errors != null">
+<div class="alert alert-danger" ng-show="validationErrors != null">
 	<ul>
-		<li ng-repeat="(component, error) in errors">
+		<li ng-repeat="(component, error) in validationErrors">
 			{{'payment.' + component | translate}}: {{'error.' + error.messageTemplate | translate:error.attributes }}
 		</li>
 	</ul>
 </div>
 ```
-The `error.<property>.messageTemplate` part is the message template returned by the bean validation constraint. We can thus e.g. base the validation error localization on [Hibernate’s own validation messages](http://grepcode.com/file/repo1.maven.org/maven2/org.hibernate/hibernate-validator/5.1.3.Final/org/hibernate/validator/ValidationMessages.properties/):
+The `validationErrors.<property>.messageTemplate` part is the message template returned by the bean validation constraint. We can thus e.g. base the validation error localization on [Hibernate’s own validation messages](http://grepcode.com/file/repo1.maven.org/maven2/org.hibernate/hibernate-validator/5.1.3.Final/org/hibernate/validator/ValidationMessages.properties/):
 ```
 var translations = {
     ...
@@ -212,12 +219,43 @@ Because the error object returned by the server is a map, we can also use it to 
 ng-class="{'has-error': errors.amount != null}"
 ```
 
+#### Exceptions
+Similar to validation errors, some runtime exceptions will also return a user-friendly error response message. For instance, let’s assume that a Customer has a list of Payments and you try to delete a Customer with a non-empty Payments list:
+```
+{
+    "error": {
+        "detailMessage": "DELETE on table 'CUSTOMER' caused a violation of foreign key constraint 'PAYMENTCUSTOMER_ID' for key (1).  The statement has been rolled back.",
+        "exception": "java.sql.SQLIntegrityConstraintViolationException"
+    }
+}
+```
+Again, you can catch and display these in the AngularJS view:
+```
+<div class="alert alert-danger" ng-show="errorNotFound != null || error != null">
+	<ul>
+		<li ng-show="error != null">
+			{{'error.' + error.exception | translate}}
+		</li>
+	</ul>
+</div>
+```
+With appropriate localization:
+```
+var translations = {
+    ...
+	'error.java.sql.SQLIntegrityConstraintViolationException': 'Cannot delete an object which is still referenced to by other objects.',
+	...
+};
+```
+Because in a real-world production environment, exposing details of an exception may be a security issue, you can suppress this user-friendly exception detail output by setting the `RestfulExceptionMapper#RETURN_EXCEPTION_BODY` boolean flag to false.
+
 ## By example
 For a complete example, please take a look at the [**example application**](https://github.com/codebulb/crudletdemo). It also shows you how to easily implement a `CrudResource` for nested resources.
 
 If you want to lean more about building RESTful web applications based on vanilla JAX-RS and Restangular, you may enjoy a [blog post I’ve written about it](http://www.codebulb.ch/2015/09/restful-software-requirements-specification-part-1.html); it features a complete example application as well.
 
 ## Specification
+### REST service endoints
 Crudlet supports these HTTP to persistence storage operations:
 
 * `GET /contextPath/model`: `service#findAll()`
@@ -233,9 +271,15 @@ Crudlet supports these HTTP to persistence storage operations:
   * Deletes the entity with the id provided
   * returns HTTP 204 NO CONTENT.
 
+### Global hooks (overrides)
+You can e.g. use a `@Startup` `@Singleton` EJB bean to manipulate the following values on application startup to configure application behavior:
+* `CorsRequestFilter#ALLOW_OPTIONS`: Disable the allow-all "preflight" CORS request filter.
+* `CorsResponseFilter#ALLOW_CORS`: Disable the allow-all CORS response filter.
+* `RestfulExceptionMapper#RETURN_EXCEPTION_BODY`: Disable user-friendly exception output.
+
 ## Project status and future plans
 Crudlet is currently experimental. I’d like to make some stability updates before releasing a proper 1.0 version. It may still already be useful for evaluation purposes, or as a skeleton to build your own solution.
 
 This is a private project I’ve started for my own pleasure and usage and to learn more about building (Ajax) REST APIs, and I have no plans for (commercial) support.
 
-You can also find more information about this project on its [**accompanying blog post**](http://www.codebulb.ch/2016/01/crudlet-ready-to-use-restangular-to-sql-crud-with-jax-rs.html).
+You can also find more information about this project on its [**accompanying blog post**](http://www.codebulb.ch/2016/01/crudlet-ready-to-use-restangular-to-sql-crud-with-jax-rs.html) and in the [**API docs**](http://codebulb.github.io/pages/crudlet/doc/).
