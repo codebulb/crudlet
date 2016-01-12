@@ -11,6 +11,47 @@
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
     
+    <build>
+        <plugins>
+            <plugin>
+                <!-- attach sources for JitPack distribution -->
+                <!-- as in https://github.com/jitpack/maven-simple/blob/master/pom.xml -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <!-- skip JavaDoc "strict checking" -->
+                    <!-- as in http://stackoverflow.com/a/23543181/1399395 -->
+                    <additionalparam>-Xdoclint:none</additionalparam>
+                    <bottom><![CDATA[Copyright &#169; {inceptionYear}&#x2013;{currentYear}, <a href="http://www.codebulb.ch">codebulb.ch<a>. All rights reserved.]]></bottom>
+                    <!-- copy additional javadoc folder resources -->
+                    <docfilessubdirs>true</docfilessubdirs>
+                </configuration>
+                <!-- attach JavaDoc for JitPack distribution -->
+                <!-- as in https://github.com/jitpack/maven-simple/blob/master/pom.xml -->
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    
     <dependencies>
         <dependency>
             <groupId>javax</groupId>

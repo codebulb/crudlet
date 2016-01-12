@@ -4,6 +4,10 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A wrapper to transform a {@link SQLIntegrityConstraintViolationException} into a user-friendly
+ * response body of a REST error response.
+ */
 public class RestfulPersistenceIntegrityConstraintViolation extends RestfulConstraintViolation {
     private SQLIntegrityConstraintViolationException cause;
 

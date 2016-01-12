@@ -10,8 +10,16 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.Providers;
 
+/**
+ * A "catch-all" exception handler for global, centralized exception handling.
+ */
 @Provider 
 public class RestfulExceptionMapper implements ExceptionMapper<Exception> {
+    /** Global hook to disable user-friendly exception output. 
+     * If <code>true</code>, details of common runtime exceptions such as 
+     * {@link SQLIntegrityConstraintViolationException}s will be returned as the body of
+     * a REST error response, which may be a security thread in a production environment;
+     * defaults to <code>true</code>. */
     public static boolean RETURN_EXCEPTION_BODY = true;
     
     @Context

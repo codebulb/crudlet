@@ -5,7 +5,18 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+/**
+ * A collection of helper utility methods for dealing with JSON.
+ */
 public class JsonHelper {
+    
+    /**
+     * Builds a {@link JsonObject} from an arbitrary nested Map.
+     * All the leaves of the resulting json object are of type String.
+     *
+     * @param map the map
+     * @return the json object
+     */
     public static JsonObject build(Map map) {
         JsonObjectBuilder root = Json.createObjectBuilder();
         for (Object key : map.keySet()) {

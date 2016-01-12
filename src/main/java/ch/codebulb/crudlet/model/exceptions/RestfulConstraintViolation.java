@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.ws.rs.core.Response;
 
+/**
+ * Base class for wrappers for constraint violations.
+ */
 public abstract class RestfulConstraintViolation {
     protected Map responseBody = new HashMap<>();
     
