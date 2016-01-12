@@ -1,0 +1,360 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+</head>
+<body>
+<p>A simple, lean JAX-RS based framework to build CRUD REST-to-SQL web applications, e.g. as an AngularJS backend.</p>
+
+<p><i>From <a href="https://github.com/codebulb/crudlet">the project's GitHub repository's documentation:</a></i></p>
+
+<h2><a id="user-content-installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>Use <a href="https://jitpack.io/">JitPack</a> to add its dependency to your Maven web application project:</p>
+
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;com.github.codebulb&lt;/groupId&gt;
+    &lt;artifactId&gt;crudlet&lt;/artifactId&gt;
+    &lt;version&gt;0.1_RC-1&lt;/version&gt;
+&lt;/dependency&gt;
+...
+&lt;repository&gt;
+    &lt;id&gt;jitpack.io&lt;/id&gt;
+    &lt;url&gt;https://jitpack.io&lt;/url&gt;
+&lt;/repository&gt;
+</code></pre>
+
+<p>Replace the version by the tag / commit hash of your choice or <code>-SNAPSHOT</code> to get the newest SNAPSHOT.</p>
+
+<p>Visit <a href="https://jitpack.io/docs/">JitPack’s docs</a> for more information.</p>
+
+<h2><a id="user-content-why-you-should-use-it" class="anchor" href="#why-you-should-use-it" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why you should use it</h2>
+
+<ul>
+<li><strong>Get production-ready REST CRUD operations on your <code>&#064;Entity</code> model in a few lines of code.</strong></li>
+<li>Extremely small footprint (JAR &lt;= 20KB), no dependencies other than plain Java EE 7.</li>
+<li>Human-readable documentation (here and in the <a href="http://codebulb.github.io/pages/crudlet/doc/">API docs</a>).</li>
+<li>Free &amp; Open source (<a href="https://github.com/codebulb/crudlet/blob/master/LICENSE">New BSD license</a>).</li>
+</ul>
+
+<h2><a id="user-content-usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>Note: The <strong>complete source code of an example application</strong> (server and client) is available <a href="https://github.com/codebulb/crudletdemo">in a separate GitHub repository</a>.</p>
+
+<h3><a id="user-content-server-setup" class="anchor" href="#server-setup" aria-hidden="true"><span class="octicon octicon-link"></span></a>Server: Setup</h3>
+
+<h4><a id="user-content-jax-rs" class="anchor" href="#jax-rs" aria-hidden="true"><span class="octicon octicon-link"></span></a>JAX-RS</h4>
+
+<p>You need to setup the JAX-RS Application servlet in the web.xml file as shown in the demo project:</p>
+
+<pre><code>&lt;servlet&gt;
+    &lt;servlet-name&gt;javax.ws.rs.core.Application&lt;/servlet-name&gt;
+&lt;/servlet&gt;
+&lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;javax.ws.rs.core.Application&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+&lt;/servlet-mapping&gt;
+</code></pre>
+
+<h4><a id="user-content-database" class="anchor" href="#database" aria-hidden="true"><span class="octicon octicon-link"></span></a>Database</h4>
+
+<p>Define your database connection in the persistence.xml file. Any JDBC compliant connection is supported. In the demo project, we use a JTA data source the configuration of which is set up in the application server.</p>
+
+<h4><a id="user-content-cors" class="anchor" href="#cors" aria-hidden="true"><span class="octicon octicon-link"></span></a>CORS</h4>
+
+<p>Crudlet by default allows you to handle CORS request without nasty errors as is usually desired in development / debug stage. The required request / response filters are implemented in the <code>CorsRequestFilter</code> and <code>CorsResponseFilter</code> class, respectively.</p>
+
+<p>Set the <code>CorsRequestFilter#ALLOW_OPTIONS</code> and <code>CorsResponseFilter#ALLOW_CORS</code> boolean flag to false (e.g. in a <code>&#064;Startup</code> <code>&#064;Singleton</code> EJB bean) to disable CORS allow-all policy.</p>
+
+<h3><a id="user-content-server-implementation" class="anchor" href="#server-implementation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Server: Implementation</h3>
+
+<p>Crudlet provides a simple, lean framework to build REST-to-SQL web applications based on common best practices. Having a basic CRUD implementation in place means that you can an any entity type:</p>
+
+<ul>
+<li><strong>Create (C)</strong> new entities</li>
+<li><strong>Read (R)</strong> persistent entities from the persistence storage</li>
+<li><strong>Update (U)</strong> entities in the persistence storage</li>
+<li><strong>Delete (D)</strong> entities from the persistence storage</li>
+</ul>
+
+<p>Building your application around a CRUD centric approach brings a couple of advantages:</p>
+
+<ul>
+<li>The service interface is very simplistic, lean and self-documenting</li>
+<li>The business logic resides in the model rather than in the service interface which matches well an object-oriented language like Java</li>
+<li>Because the service interface stays the same for all entities, we can make excessive use of abstraction through inheritance and generics</li>
+<li>This architecture matches well a best practices compliant RESTful implementation where the four CRUD actions are really matched against HTTP verbs.</li>
+</ul>
+
+<p>This best practices architecture is based on three central artifacts for which Crudlet provides an abstract generic base implementation:</p>
+
+<ul>
+<li><code>CrudEntity</code>: the entity model</li>
+<li><code>CrudService</code>: the persistence service</li>
+<li><code>CrudResource</code>: the REST web service endpoint</li>
+</ul>
+
+<p>In a CRUD application, the relation between these artifacts is 1 : 1 : 1; you will thus build a service and a controller for every entity. Thanks to the level of abstraction provided by Crudlet, this is a matter of about 30 lines of code:</p>
+
+<ul>
+<li><code>CrudEntity</code> makes sure your entity implements an auto-ID generation strategy</li>
+<li><code>CrudService</code> implements basic persistence storage access (through an EntityManager) for the four CRUD operations</li>
+<li><code>CrudResource</code> implements a REST web service endpoint for editing all entities in the persistence storage including out-of-the-box support for returning I18N-ready model validation error messages.</li>
+</ul>
+
+<h4><a id="user-content-entity" class="anchor" href="#entity" aria-hidden="true"><span class="octicon octicon-link"></span></a>Entity</h4>
+
+<p>Use either the <code>CrudIdentifiable</code> interface or the <code>CrudEntity</code> class to derive your entity model classes from. This is the only prerequisite to use them with a <code>CrudService</code> and a <code>CrudResource</code>.</p>
+
+<p>The difference between the interface and the class is that the latter provides an auto-generated Long id field implementation out-of-the-box.</p>
+
+<p>For instance, to create a <code>Customer</code> entity:</p>
+
+<pre><code>&#064;Entity
+public class Customer extends CrudEntity { 
+    &#064;NotNull
+    &#064;Pattern(regexp = "[A-Za-z ]*")
+    private String name;
+    private String address;
+    private String city;
+    ...
+</code></pre>
+
+<p>Use Bean Validation constraints to declaratively specify the model validation.</p>
+
+<h4><a id="user-content-service" class="anchor" href="#service" aria-hidden="true"><span class="octicon octicon-link"></span></a>Service</h4>
+
+<p>In order to create a CRUD service for an entity type, implement <code>CrudService</code> for the entity and register it as a CDI bean in the container (depending on beans.xml bean-discovery-mode, explicit registration may not be necessary).</p>
+
+<p>For instance, to create the service for the <code>Customer</code> entity:</p>
+
+<pre><code>public class CustomerService extends CrudService&lt;Customer&gt; {
+    &#064;Override
+    &#064;PersistenceContext
+    protected void setEm(EntityManager em) {
+        super.setEm(em);
+    }
+
+    &#064;Override
+    public Customer create() {
+        return new Customer();
+    }
+
+    &#064;Override
+    public Class&lt;Customer&gt; getModelClass() {
+        return Customer.class;
+    }
+}
+</code></pre>
+
+<ul>
+<li>Within the <code>setEm(EntityManager)</code> method, simply call the super method. The important part is that you inject your <code>&#064;PersistenceContext</code> in this method by annotation.</li>
+</ul>
+
+<p>Of course, you are free to add additional methods to your <code>CrudService</code> implementation where reasonable.</p>
+
+<h4><a id="user-content-web-service-endpoint" class="anchor" href="#web-service-endpoint" aria-hidden="true"><span class="octicon octicon-link"></span></a>Web service endpoint</h4>
+
+<p>Finally, create the REST web service endpoint by implementing <code>CrudResource</code> for the entity and register it as a <code>&#064;Stateless</code> EJB bean in the container.</p>
+
+<p>For instance, to create the web service endpoint for the <code>Customer</code> entity:</p>
+
+<pre><code>&#064;Path("customers")
+&#064;Stateless
+public class CustomerResource extends CrudResource&lt;Customer&gt; {
+    &#064;Inject
+    private CustomerService service;
+
+    &#064;Override
+    protected CrudService&lt;Customer&gt; getService() {
+        return service;
+    }
+}
+</code></pre>
+
+<ul>
+<li>The <code>&#064;Path</code> defines the base path of the web service endpoint.</li>
+<li>Within the <code>getService()</code> method, return the concrete <code>CrudService</code> for the entity type in question which you should dependency-inject into the controller.</li>
+</ul>
+
+<p><strong>That’s it.</strong> Now you can use e.g. the <a href="https://github.com/jkbrzt/httpie">httpie</a> command line tool to verify that you can execute RESTful CRUD operations on your entity running on the database.</p>
+
+<p>Of course, you are free to add additional methods to your <code>CrudResource</code> implementation where reasonable.</p>
+
+<p>Read on for an example client implementation based on AngularJS.</p>
+
+<h3><a id="user-content-angularjs-client-setup" class="anchor" href="#angularjs-client-setup" aria-hidden="true"><span class="octicon octicon-link"></span></a>AngularJS client: Setup</h3>
+
+<p>In this example, we use <a href="https://github.com/mgonto/restangular">Restangular</a> as an abstraction layer to do RESTful HTTP requests which offers a far more sophisticated although more concise API than AngularJS’s built-in <code>$http</code> and <code>$resource</code>. It is set up as shown in the demo application’s main JavaScript file:</p>
+
+<pre><code>.config(function (RestangularProvider) {
+    RestangularProvider.setBaseUrl('http://localhost:8080/CrudletDemo.server/');
+
+    RestangularProvider.setRequestInterceptor(function(elem, operation) {
+        // prevent "400 - bad request" error on DELETE
+        // as in https://github.com/mgonto/restangular/issues/78#issuecomment-18687759
+        if (operation === "remove") {
+            return undefined;
+        }
+        return elem;
+    });
+})
+</code></pre>
+
+<p>You also potentially want to install and setup the <a href="http://angular-translate.github.io/">angular-translate</a> module for I18N support:</p>
+
+<pre><code>.config(['$translateProvider', function ($translateProvider) {
+    $translateProvider.translations('en', translations);
+    $translateProvider.preferredLanguage('en');
+    $translateProvider.useMissingTranslationHandlerLog();
+    $translateProvider.useSanitizeValueStrategy('sanitize');
+}])
+</code></pre>
+
+<h3><a id="user-content-angularjs-client-implementation" class="anchor" href="#angularjs-client-implementation" aria-hidden="true"><span class="octicon octicon-link"></span></a>AngularJS client: Implementation</h3>
+
+<p>In the “controller” JavaScript file, we can use Restangular to access the RESTful web service endpoint of our Crudlet Customer service like so:</p>
+
+<ul>
+<li>Get a list of entities (GET /customers/): <code>Restangular.all("customers").getList().then(function(entities) {...})</code></li>
+<li>Get a single entity (GET /customers/1): <code>Restangular.one("customers", $routeParams.id).get().then(function (entity) {...})</code></li>
+<li>Save an entity (PUT /customers/1): <code>$scope.entity.save().then(function() {...})</code></li>
+</ul>
+
+<h4><a id="user-content-validation" class="anchor" href="#validation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Validation</h4>
+
+<p>An interesting aspect of Crudlet is its out-of-the-box support for localized validation error messages. If upon save, a validation error occurs, the server answers e.g. like this:</p>
+
+<pre><code>{
+    "validationErrors": {
+        "name": {
+            "attributes": {
+                "flags": "[Ljavax.validation.constraints.Pattern$Flag;&#064;1f414540",
+                "regexp": "[A-Za-z ]*"
+            },
+            "constraintClassName": "javax.validation.constraints.Pattern",
+            "invalidValue": "Name not allowed!!",
+            "messageTemplate": "javax.validation.constraints.Pattern.message"
+        }
+    }
+}
+</code></pre>
+
+<p>Using the angular-translate module of AngularJS we set up previously, we can show all localized validation messages like so:</p>
+
+<pre><code>&lt;div class="alert alert-danger" ng-show="validationErrors != null"&gt;
+    &lt;ul&gt;
+        &lt;li ng-repeat="(component, error) in validationErrors"&gt;
+            {{'payment.' + component | translate}}: {{'error.' + error.messageTemplate | translate:error.attributes }}
+        &lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/div&gt;
+</code></pre>
+
+<p>The <code>validationErrors.&lt;property&gt;.messageTemplate</code> part is the message template returned by the bean validation constraint. We can thus e.g. base the validation error localization on <a href="http://grepcode.com/file/repo1.maven.org/maven2/org.hibernate/hibernate-validator/5.1.3.Final/org/hibernate/validator/ValidationMessages.properties/">Hibernate’s own validation messages</a>:</p>
+
+<pre><code>var translations = {
+    ...
+    'error.javax.validation.constraints.Pattern.message': 'must match "{{regexp}}"',
+    ...
+};
+</code></pre>
+
+<p>(I preceded it with <code>error.</code> here.)</p>
+
+<p>Because the error object returned by the server is a map, we can also use it to conditionally render special error styling, e.g. using Bootstrap’s error style class:</p>
+
+<pre><code>ng-class="{'has-error': errors.amount != null}"
+</code></pre>
+
+<h4><a id="user-content-exceptions" class="anchor" href="#exceptions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Exceptions</h4>
+
+<p>Similar to validation errors, some runtime exceptions will also return a user-friendly error response message. For instance, let’s assume that a Customer has a list of Payments and you try to delete a Customer with a non-empty Payments list:</p>
+
+<pre><code>{
+    "error": {
+        "detailMessage": "DELETE on table 'CUSTOMER' caused a violation of foreign key constraint 'PAYMENTCUSTOMER_ID' for key (1).  The statement has been rolled back.",
+        "exception": "java.sql.SQLIntegrityConstraintViolationException"
+    }
+}
+</code></pre>
+
+<p>Again, you can catch and display these in the AngularJS view:</p>
+
+<pre><code>&lt;div class="alert alert-danger" ng-show="errorNotFound != null || error != null"&gt;
+    &lt;ul&gt;
+        &lt;li ng-show="error != null"&gt;
+            {{'error.' + error.exception | translate}}
+        &lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/div&gt;
+</code></pre>
+
+<p>With appropriate localization:</p>
+
+<pre><code>var translations = {
+    ...
+    'error.java.sql.SQLIntegrityConstraintViolationException': 'Cannot delete an object which is still referenced to by other objects.',
+    ...
+};
+</code></pre>
+
+<p>Because in a real-world production environment, exposing details of an exception may be a security issue, you can suppress this user-friendly exception detail output by setting the <code>RestfulExceptionMapper#RETURN_EXCEPTION_BODY</code> boolean flag to false.</p>
+
+<h2><a id="user-content-by-example" class="anchor" href="#by-example" aria-hidden="true"><span class="octicon octicon-link"></span></a>By example</h2>
+
+<p>For a complete example, please take a look at the <a href="https://github.com/codebulb/crudletdemo"><strong>example application</strong></a>. It also shows you how to easily implement a <code>CrudResource</code> for nested resources.</p>
+
+<p>If you want to lean more about building RESTful web applications based on vanilla JAX-RS and Restangular, you may enjoy a <a href="http://www.codebulb.ch/2015/09/restful-software-requirements-specification-part-1.html">blog post I’ve written about it</a>; it features a complete example application as well.</p>
+
+<h2><a id="user-content-specification" class="anchor" href="#specification" aria-hidden="true"><span class="octicon octicon-link"></span></a>Specification</h2>
+
+<h3><a id="user-content-rest-service-endoints" class="anchor" href="#rest-service-endoints" aria-hidden="true"><span class="octicon octicon-link"></span></a>REST service endoints</h3>
+
+<p>Crudlet supports these HTTP to persistence storage operations:</p>
+
+<ul>
+<li><code>GET /contextPath/model</code>: <code>service#findAll()</code>
+
+<ul>
+<li>Searches for all entities of the given type.</li>
+<li>returns HTTP 200 OK with list of entities</li>
+</ul></li>
+<li><code>GET /contextPath/model/:id</code>: <code>service#findById(id)</code>
+
+<ul>
+<li>Searches for the entities of the given type with the given id.</li>
+<li>returns HTTP 200 OK with entity if found; or HTTP 404 NOT FOUND if entity is not found.</li>
+</ul></li>
+<li><code>PUT /contextPath/model/</code> with entity or <code>PUT /contextPath/model/:id</code> with entity or <code>POST /contextPath/model/</code> with entity or POST <code>/contextPath/model/:id</code> with entity: <code>service#save(entity)</code>
+
+<ul>
+<li>Saves the entity for the first time or updates the existing entity, based on the presence of an id on the entity.</li>
+<li>returns HTTP 200 OK with updated entity (e.g. new id) and Link header with content “/contextPath/model/:id”; or HTTP 400 BAD REQUEST with error information on validation error</li>
+</ul></li>
+<li><code>DELETE /contextPath/model/:id</code> or <code>DELETE /contextPath/model/:id</code> with entity: <code>service#delete(id)</code>
+
+<ul>
+<li>Deletes the entity with the id provided</li>
+<li>returns HTTP 204 NO CONTENT.</li>
+</ul></li>
+</ul>
+
+<h3><a id="user-content-global-hooks-overrides" class="anchor" href="#global-hooks-overrides" aria-hidden="true"><span class="octicon octicon-link"></span></a>Global hooks (overrides)</h3>
+
+<p>You can e.g. use a <code>&#064;Startup</code> <code>&#064;Singleton</code> EJB bean to manipulate the following values on application startup to configure application behavior:</p>
+
+<ul>
+<li><code>CorsRequestFilter#ALLOW_OPTIONS</code>: Disable the allow-all "preflight" CORS request filter.</li>
+<li><code>CorsResponseFilter#ALLOW_CORS</code>: Disable the allow-all CORS response filter.</li>
+<li><code>RestfulExceptionMapper#RETURN_EXCEPTION_BODY</code>: Disable user-friendly exception output.</li>
+</ul>
+
+<h2><a id="user-content-project-status-and-future-plans" class="anchor" href="#project-status-and-future-plans" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project status and future plans</h2>
+
+<p>Crudlet is currently experimental. I’d like to make some stability updates before releasing a proper 1.0 version. It may still already be useful for evaluation purposes, or as a skeleton to build your own solution.</p>
+
+<p>This is a private project I’ve started for my own pleasure and usage and to learn more about building (Ajax) REST APIs, and I have no plans for (commercial) support.</p>
+
+<p>You can also find more information about this project on its <a href="http://www.codebulb.ch/2016/01/crudlet-ready-to-use-restangular-to-sql-crud-with-jax-rs.html"><strong>accompanying blog post</strong></a> and in the <a href="http://codebulb.github.io/pages/crudlet/doc/"><strong>API docs</strong></a>.</p>
+</body>
+</html>
