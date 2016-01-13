@@ -1,5 +1,5 @@
 # crudlet
-A simple, lean JAX-RS based framework to build CRUD REST-to-SQL web applications, e.g. as an AngularJS backend.
+A simple, lean JAX-RS based framework to build CRUD REST-to-SQL web applications running on a Java web application server, e.g. as an AngularJS backend.
 
 ## Installation
 Use [JitPack](https://jitpack.io/) to add its dependency to your Maven web application project:
@@ -19,8 +19,12 @@ Replace the version by the tag / commit hash of your choice or `-SNAPSHOT` to ge
 
 Visit [JitPack’s docs](https://jitpack.io/docs/) for more information.
 
+## Ways to use it
+* Build your `@Entity` model and get production-ready REST CRUD operations in a few lines of code.
+* Concentrate on building front-end logic (e.g. using AngularJS) and use Crudlet to ensure the database backend is “just there”, working as expected
+* Study the project's open source code as an example of best-practices REST CRUD and build your own solution on top of it.
+
 ## Why you should use it
-* **Get production-ready REST CRUD operations on your `@Entity` model in a few lines of code.**
 * Extremely small footprint (JAR <= 20KB), no dependencies other than plain Java EE 7.
 * Human-readable documentation (here and in the [API docs](http://codebulb.github.io/pages/crudlet/doc/)).
 * Free & Open source ([New BSD license](https://github.com/codebulb/crudlet/blob/master/LICENSE)).
@@ -255,14 +259,14 @@ For a complete example, please take a look at the [**example application**](http
 If you want to lean more about building RESTful web applications based on vanilla JAX-RS and Restangular, you may enjoy a [blog post I’ve written about it](http://www.codebulb.ch/2015/09/restful-software-requirements-specification-part-1.html); it features a complete example application as well.
 
 ## Specification
-### REST service endoints
-Crudlet supports these HTTP to persistence storage operations:
+### REST service endpoints
+Crudlet maps these HTTP requests to persistence storage operations:
 
 * `GET /contextPath/model`: `service#findAll()`
   * Searches for all entities of the given type.
   * returns HTTP 200 OK with list of entities
 * `GET /contextPath/model/:id`: `service#findById(id)`
-  * Searches for the entities of the given type with the given id.
+  * Searches for the entity of the given type with the given id.
   * returns HTTP 200 OK with entity if found; or HTTP 404 NOT FOUND if entity is not found.
 * `PUT /contextPath/model/` with entity or `PUT /contextPath/model/:id` with entity or `POST /contextPath/model/` with entity or POST `/contextPath/model/:id` with entity: `service#save(entity)`
   * Saves the entity for the first time or updates the existing entity, based on the presence of an id on the entity.
