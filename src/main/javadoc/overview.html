@@ -3,7 +3,7 @@
 <head>
 </head>
 <body>
-<p>A simple, lean JAX-RS based framework to build CRUD REST-to-SQL web applications, e.g. as an AngularJS backend.</p>
+<p>A simple, lean JAX-RS based framework to build CRUD REST-to-SQL web applications running on a Java web application server, e.g. as an AngularJS backend.</p>
 
 <p><i>From <a href="https://github.com/codebulb/crudlet">the project's GitHub repository's documentation:</a></i></p>
 
@@ -27,10 +27,17 @@
 
 <p>Visit <a href="https://jitpack.io/docs/">JitPack’s docs</a> for more information.</p>
 
+<h2><a id="user-content-ways-to-use-it" class="anchor" href="#ways-to-use-it" aria-hidden="true"><span class="octicon octicon-link"></span></a>Ways to use it</h2>
+
+<ul>
+<li>Build your <code>@Entity</code> model and get production-ready REST CRUD operations in a few lines of code.</li>
+<li>Concentrate on building front-end logic (e.g. using AngularJS) and use Crudlet to ensure the database backend is “just there”, working as expected</li>
+<li>Study the project's open source code as an example of best-practices REST CRUD and build your own solution on top of it.</li>
+</ul>
+
 <h2><a id="user-content-why-you-should-use-it" class="anchor" href="#why-you-should-use-it" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why you should use it</h2>
 
 <ul>
-<li><strong>Get production-ready REST CRUD operations on your <code>&#064;Entity</code> model in a few lines of code.</strong></li>
 <li>Extremely small footprint (JAR &lt;= 20KB), no dependencies other than plain Java EE 7.</li>
 <li>Human-readable documentation (here and in the <a href="http://codebulb.github.io/pages/crudlet/doc/">API docs</a>).</li>
 <li>Free &amp; Open source (<a href="https://github.com/codebulb/crudlet/blob/master/LICENSE">New BSD license</a>).</li>
@@ -308,9 +315,9 @@ public class CustomerResource extends CrudResource&lt;Customer&gt; {
 
 <h2><a id="user-content-specification" class="anchor" href="#specification" aria-hidden="true"><span class="octicon octicon-link"></span></a>Specification</h2>
 
-<h3><a id="user-content-rest-service-endoints" class="anchor" href="#rest-service-endoints" aria-hidden="true"><span class="octicon octicon-link"></span></a>REST service endoints</h3>
+<h3><a id="user-content-rest-service-endoints" class="anchor" href="#rest-service-endoints" aria-hidden="true"><span class="octicon octicon-link"></span></a>REST service endpoints</h3>
 
-<p>Crudlet supports these HTTP to persistence storage operations:</p>
+<p>Crudlet maps these HTTP requests to persistence storage operations:</p>
 
 <ul>
 <li><code>GET /contextPath/model</code>: <code>service#findAll()</code>
@@ -322,7 +329,7 @@ public class CustomerResource extends CrudResource&lt;Customer&gt; {
 <li><code>GET /contextPath/model/:id</code>: <code>service#findById(id)</code>
 
 <ul>
-<li>Searches for the entities of the given type with the given id.</li>
+<li>Searches for the entity of the given type with the given id.</li>
 <li>returns HTTP 200 OK with entity if found; or HTTP 404 NOT FOUND if entity is not found.</li>
 </ul></li>
 <li><code>PUT /contextPath/model/</code> with entity or <code>PUT /contextPath/model/:id</code> with entity or <code>POST /contextPath/model/</code> with entity or POST <code>/contextPath/model/:id</code> with entity: <code>service#save(entity)</code>
