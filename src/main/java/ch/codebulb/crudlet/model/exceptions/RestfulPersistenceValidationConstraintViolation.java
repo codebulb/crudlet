@@ -6,6 +6,10 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+/**
+ * A wrapper to transform a {@link ConstraintViolationException} into a user-friendly
+ * response body of a REST error response.
+ */
 public class RestfulPersistenceValidationConstraintViolation extends RestfulConstraintViolation {
     
     public RestfulPersistenceValidationConstraintViolation(ConstraintViolationException ex) {
