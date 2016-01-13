@@ -1,4 +1,4 @@
-package ch.codebulb.crudlet.model.exceptions;
+package ch.codebulb.crudlet.model.errors;
 
 import ch.codebulb.crudlet.util.JsonHelper;
 import java.util.HashMap;

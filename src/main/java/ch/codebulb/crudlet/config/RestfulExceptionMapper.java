@@ -1,6 +1,6 @@
 package ch.codebulb.crudlet.config;
 
-import ch.codebulb.crudlet.model.exceptions.RestfulPersistenceIntegrityConstraintViolation;
+import ch.codebulb.crudlet.model.errors.RestfulPersistenceIntegrityConstraintViolation;
 import java.sql.SQLIntegrityConstraintViolationException;
 import javax.persistence.PersistenceException;
 import javax.transaction.RollbackException;

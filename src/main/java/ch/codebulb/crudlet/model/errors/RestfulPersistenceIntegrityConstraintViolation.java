@@ -1,4 +1,4 @@
-package ch.codebulb.crudlet.model.exceptions;
+package ch.codebulb.crudlet.model.errors;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;

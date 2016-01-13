@@ -1,10 +1,9 @@
 package ch.codebulb.crudlet.webservice;
 
-import ch.codebulb.crudlet.model.exceptions.RestfulPersistenceValidationConstraintViolation;
+import ch.codebulb.crudlet.model.errors.RestfulPersistenceValidationConstraintViolation;
 import ch.codebulb.crudlet.model.CrudEntity;
 import ch.codebulb.crudlet.model.CrudIdentifiable;
 import ch.codebulb.crudlet.service.CrudService;
-import ch.codebulb.crudlet.service.CrudServiceMocked;
 
 import java.util.ArrayList;
 import java.util.HashMap;
