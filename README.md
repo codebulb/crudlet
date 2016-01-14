@@ -7,7 +7,7 @@ Use [JitPack](https://jitpack.io/) to add its dependency to your Maven web appli
 <dependency>
     <groupId>com.github.codebulb</groupId>
     <artifactId>crudlet</artifactId>
-    <version>0.1_RC-1</version>
+    <version>0.1</version>
 </dependency>
 ...
 <repository>
@@ -286,4 +286,6 @@ Crudlet is currently experimental. I’d like to make some stability updates bef
 
 This is a private project I’ve started for my own pleasure and usage and to learn more about building (Ajax) REST APIs, and I have no plans for (commercial) support.
 
-You can also find more information about this project on its [**accompanying blog post**](http://www.codebulb.ch/2016/01/crudlet-ready-to-use-restangular-to-sql-crud-with-jax-rs.html) and in the [**API docs**](http://codebulb.github.io/pages/crudlet/doc/).
+You can also find more information about this project on its [**accompanying blog post**](http://www.codebulb.ch/2016/01/crudlet-ready-to-use-restangular-to-sql-crud-with-jax-rs.html) and in the API docs:
+* [**V. 0.1 docs**](http://codebulb.github.io/pages/crudlet/doc/0.1/)
+* [**Current SNAPSHOT docs**](http://codebulb.github.io/pages/crudlet/doc/)
