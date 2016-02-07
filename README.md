@@ -1,6 +1,8 @@
 # crudlet
 A simple, lean JAX-RS based framework to build CRUD REST-to-SQL web applications running on a Java web application server, e.g. as an AngularJS backend.
 
+*Note: There is a port of the equivalent functionality for use on a Node.js server tech stack: [hapi-bookshelf-crud](https://github.com/codebulb/hapi-bookshelf-crud).*
+
 ## Installation
 Use [JitPack](https://jitpack.io/) to add its dependency to your Maven web application project:
 ```
@@ -179,6 +181,7 @@ In the “controller” JavaScript file, we can use Restangular to access the RE
 * Get a list of entities (GET /customers/): `Restangular.all("customers").getList().then(function(entities) {...})`
 * Get a single entity (GET /customers/1): `Restangular.one("customers", $routeParams.id).get().then(function (entity) {...})`
 * Save an entity (PUT /customers/1): `$scope.entity.save().then(function() {...})`
+* ... (see [Restangular's documentation](https://github.com/mgonto/restangular) for more information)
 
 #### Validation
 An interesting aspect of Crudlet is its out-of-the-box support for localized validation error messages. If upon save, a validation error occurs, the server answers e.g. like this:
@@ -274,6 +277,23 @@ Crudlet maps these HTTP requests to persistence storage operations:
 * `DELETE /contextPath/model/:id` or `DELETE /contextPath/model/:id` with entity: `service#delete(id)`
   * Deletes the entity with the id provided
   * returns HTTP 204 NO CONTENT.
+
+These REST service endpoints are optimized for use with a [Restangular](https://github.com/mgonto/restangular) client.
+
+#### Validation errors
+A validation error returns with HTTP 400 BAD REQUEST and the following error information (as far as it is available) in the body:
+* `validationError`
+  * (for every erronous property): `[property]`
+    * `constraintClassName`: Joi `error.details.type`
+    * `messageTemplate`: Same as `constraintClassName`
+    * `invalidValue`: Joi `error.details.context.value`
+    * `attributes`: Joi `error.details.context` without `value`
+
+#### Other errors
+A non-validation error returns with HTTP 400 BAD REQUEST and the following error information (as far as it is available) in the body:
+* `error`
+  * `exception`: `error.code`
+  * `detailMessage`: `error.message`
 
 ### Global hooks (overrides)
 You can e.g. use a `@Startup` `@Singleton` EJB bean to manipulate the following values on application startup to configure application behavior:
