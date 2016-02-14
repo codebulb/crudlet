@@ -280,6 +280,8 @@ Crudlet maps these HTTP requests to persistence storage operations:
 
 These REST service endpoints are optimized for use with a [Restangular](https://github.com/mgonto/restangular) client.
 
+Note: A JAX-RS based server implicitly allows optional trailing slashes (`/`) for these endpoints.
+
 #### Validation errors
 A validation error returns with HTTP 400 BAD REQUEST and the following error information (as far as it is available) in the body:
 * `validationError`
