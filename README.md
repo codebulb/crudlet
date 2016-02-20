@@ -280,6 +280,9 @@ Crudlet maps these HTTP requests to persistence storage operations:
 * `DELETE /contextPath/model/:id`: `service#delete(id)`
   * Deletes the entity with the id provided or does nothing if no entity with the id provided exists.
   * returns HTTP 204 NO CONTENT.
+* `DELETE /contextPath/model`: `service#deleteAll(id)`
+  * Deletes all entities of the given type.
+  * returns HTTP 204 NO CONTENT; or HTTP 403 FORBIDDEN if the global `Options#DELETE_ALL` flag is set to `false`.
 
 These REST service endpoints are optimized for use with a [Restangular](https://github.com/mgonto/restangular) client.
 
@@ -304,6 +307,7 @@ A non-validation error returns with HTTP 400 BAD REQUEST and the following error
 You can e.g. use a `@Startup` `@Singleton` EJB bean to manipulate the following values on application startup to configure application behavior:
 * `Options#CORS`: Disable the allow-all "preflight" CORS request filter as well as the allow-all CORS response filter.
 * `Options#RETURN_EXCEPTION_BODY`: Disable user-friendly exception output.
+* `Options#DELETE_ALL`: Disable "DELETE ALL" service endpoint.
 
 ## Project status and future plans
 Crudlet is currently experimental. I’d like to make some stability updates before releasing a proper 1.0 version. It may still already be useful for evaluation purposes, or as a skeleton to build your own solution.
