@@ -53,7 +53,7 @@ Define your database connection in the persistence.xml file. Any JDBC compliant 
 #### CORS
 Crudlet by default allows you to handle CORS request without nasty errors as is usually desired in development / debug stage. The required request / response filters are implemented in the `CorsRequestFilter` and `CorsResponseFilter` class, respectively.
 
-Set the `CorsRequestFilter#ALLOW_OPTIONS` and `CorsResponseFilter#ALLOW_CORS` boolean flag to false (e.g. in a `@Startup` `@Singleton` EJB bean) to disable CORS allow-all policy.
+Set the `Options#CORS` boolean flag to false (e.g. in a `@Startup` `@Singleton` EJB bean) to disable CORS allow-all policy.
 
 ### Server: Implementation
 Crudlet provides a simple, lean framework to build REST-to-SQL web applications based on common best practices. Having a basic CRUD implementation in place means that you can an any entity type:
@@ -254,7 +254,7 @@ var translations = {
   ...
 };
 ```
-Because in a real-world production environment, exposing details of an exception may be a security issue, you can suppress this user-friendly exception detail output by setting the `RestfulExceptionMapper#RETURN_EXCEPTION_BODY` boolean flag to false.
+Because in a real-world production environment, exposing details of an exception may be a security issue, you can suppress this user-friendly exception detail output by setting the `Options#RETURN_EXCEPTION_BODY` boolean flag to false.
 
 ## By example
 For a complete example, please take a look at the [**example application**](https://github.com/codebulb/crudletdemo). It also shows you how to easily implement a `CrudResource` for nested resources.
@@ -302,9 +302,8 @@ A non-validation error returns with HTTP 400 BAD REQUEST and the following error
 
 ### Global hooks (overrides)
 You can e.g. use a `@Startup` `@Singleton` EJB bean to manipulate the following values on application startup to configure application behavior:
-* `CorsRequestFilter#ALLOW_OPTIONS`: Disable the allow-all "preflight" CORS request filter.
-* `CorsResponseFilter#ALLOW_CORS`: Disable the allow-all CORS response filter.
-* `RestfulExceptionMapper#RETURN_EXCEPTION_BODY`: Disable user-friendly exception output.
+* `Options#CORS`: Disable the allow-all "preflight" CORS request filter as well as the allow-all CORS response filter.
+* `Options#RETURN_EXCEPTION_BODY`: Disable user-friendly exception output.
 
 ## Project status and future plans
 Crudlet is currently experimental. I’d like to make some stability updates before releasing a proper 1.0 version. It may still already be useful for evaluation purposes, or as a skeleton to build your own solution.
