@@ -89,7 +89,7 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public List<T> findAll() {
-        if (Options.SUPPORT_FILTERS) {
+        if (Options.ALLOW_FILTERS) {
             Map<String, String> queryParameters = getQueryParameters();
             if (!queryParameters.isEmpty()) {
                 return new ArrayList<>(findAllEntitiesBy(queryParameters));
@@ -171,7 +171,7 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
     @DELETE
     @Path("/")
     public Response deleteAll() {
-        if (!Options.SUPPORT_DELETE_ALL) {
+        if (!Options.ALLOW_DELETE_ALL) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         deleteAllEntities();
