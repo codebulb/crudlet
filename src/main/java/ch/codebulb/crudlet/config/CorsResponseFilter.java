@@ -15,12 +15,11 @@ import javax.ws.rs.container.PreMatching;
 // as in http://www.developerscrappad.com/1781/java/java-ee/rest-jax-rs/java-ee-7-jax-rs-2-0-cors-on-rest-how-to-make-rest-apis-accessible-from-a-different-domain/
 // and http://stackoverflow.com/a/28067653/1399395
 public class CorsResponseFilter implements ContainerResponseFilter {
-    /** Global hook to disable this filter. <code>false</code> means disabled; defaults to <code>true</code>. */
-    public static boolean ALLOW_CORS = true;
+    
  
     @Override
     public void filter(ContainerRequestContext requestCtx, ContainerResponseContext responseCtx) throws IOException {
-        if (ALLOW_CORS) {
+        if (Options.CORS) {
             responseCtx.getHeaders().add("Access-Control-Allow-Origin", "*");
             responseCtx.getHeaders().add("Access-Control-Allow-Credentials", "true");
             responseCtx.getHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");

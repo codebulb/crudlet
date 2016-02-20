@@ -15,19 +15,12 @@ import javax.ws.rs.ext.Providers;
  */
 @Provider 
 public class RestfulExceptionMapper implements ExceptionMapper<Exception> {
-    /** Global hook to disable user-friendly exception output. 
-     * If <code>true</code>, details of common runtime exceptions such as 
-     * {@link SQLIntegrityConstraintViolationException}s will be returned as the body of
-     * a REST error response, which may be a security thread in a production environment;
-     * defaults to <code>true</code>. */
-    public static boolean RETURN_EXCEPTION_BODY = true;
-    
     @Context
     private Providers providers;
 
     @Override 
     public Response toResponse(Exception ex) {
-        if (RETURN_EXCEPTION_BODY) {
+        if (Options.RETURN_EXCEPTION_BODY) {
             if (ex instanceof RollbackException) {
                 Throwable cause = ex.getCause();
                 if (cause instanceof PersistenceException) {
