@@ -1,5 +1,6 @@
 package ch.codebulb.crudlet.webservice;
 
+import ch.codebulb.crudlet.config.Options;
 import ch.codebulb.crudlet.model.errors.RestValidationConstraintErrorBuilder;
 import ch.codebulb.crudlet.model.CrudEntity;
 import ch.codebulb.crudlet.model.CrudIdentifiable;
@@ -136,12 +137,24 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
     
     /**
      * Deletes the entity with the {@link CrudEntity#getId()} provided.
-     * Returns an error if occurred during processing.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") Long id) {
         getService().delete(id);
+        return Response.status(Response.Status.NO_CONTENT).build();
+    }
+    
+    /**
+     * Deletes all entities.
+     */
+    @DELETE
+    @Path("/")
+    public Response deleteAll() {
+        if (!Options.DELETE_ALL) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+        deleteAllEntities();
         return Response.status(Response.Status.NO_CONTENT).build();
     }
     
@@ -175,6 +188,13 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
     protected T saveEntity(T entity) {
         entity = getService().save(entity);
         return entity;
+    }
+    
+    /**
+     * Calls the delete all service method.
+     */
+    protected void deleteAllEntities() {
+        getService().deleteAll();
     }
 
     private Response buildSaveReply(T entity, boolean created) {

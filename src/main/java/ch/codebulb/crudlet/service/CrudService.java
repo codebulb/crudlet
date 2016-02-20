@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
@@ -142,5 +143,16 @@ public abstract class CrudService<T extends CrudIdentifiable> implements Seriali
     public void delete(Long id) {
         T entity = em.getReference(getModelClass(), id);
         em.remove(entity);
+        em.flush();
+    }
+    
+    /**
+     * Deletes all entities.
+     */
+    public void deleteAll() {
+        CriteriaDelete<T> query = em.getCriteriaBuilder().createCriteriaDelete(getModelClass());
+        query.from(getModelClass());
+        em.createQuery(query).executeUpdate();
+        em.flush();
     }
 }

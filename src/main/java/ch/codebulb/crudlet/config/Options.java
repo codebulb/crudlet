@@ -15,4 +15,7 @@ public class Options {
      * a REST error response, which may be a security thread in a production environment;
      * defaults to <code>true</code>. */
     public static boolean RETURN_EXCEPTION_BODY = true;
+    
+    /** Global hook to disable the <code>DELETE /</code> (delete all) service endpoint. <code>false</code> means disabled; defaults to <code>true</code>. */
+    public static boolean DELETE_ALL = true;
 }
