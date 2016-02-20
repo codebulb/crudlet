@@ -277,7 +277,7 @@ Crudlet maps these HTTP requests to persistence storage operations:
 * `PUT /contextPath/model/:id` with entity: `service#save(entity)`
   * Updates the existing entity.
   * returns HTTP 200 OK with updated entity (e.g. new id) and `Location` header with content “/contextPath/model/:id”; or HTTP 400 BAD REQUEST with error information on validation error / if entity's `id` field is not `null` nor matches the `:id` path parameter.
-* `DELETE /contextPath/model/:id` or `DELETE /contextPath/model/:id` with entity: `service#delete(id)`
+* `DELETE /contextPath/model/:id`: `service#delete(id)`
   * Deletes the entity with the id provided or does nothing if no entity with the id provided exists.
   * returns HTTP 204 NO CONTENT.
 
