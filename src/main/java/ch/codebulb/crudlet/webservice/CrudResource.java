@@ -145,13 +145,6 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
         return Response.status(Response.Status.NO_CONTENT).build();
     }
     
-    @DELETE
-    @Path("/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response deleteEntity(@PathParam("id") Long id, T entity) {
-        return delete(id);
-    }
-    
     /**
      * Returns the service instance. The service should be dependency-injected into this 
      * web service endpoint implementation.
