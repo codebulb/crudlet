@@ -63,4 +63,9 @@ public abstract class CrudServiceMocked<T extends CrudIdentifiable> extends Crud
     public List<T> findBy(Map<String, String> predicates) {
         throw new UnsupportedOperationException("Custom filtering not implemented.");
     }
+
+    @Override
+    public long countBy(Map<String, String> predicates) {
+        throw new UnsupportedOperationException("Custom filtering not implemented.");
+    }
 }

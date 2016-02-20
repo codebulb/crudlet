@@ -106,9 +106,7 @@ public abstract class CrudService<T extends CrudIdentifiable> implements Seriali
      * Returns a List of all entities.
      */
     public List<T> findAll() {
-        CriteriaQuery<T> query = em.getCriteriaBuilder().createQuery(getModelClass());
-        query.select(query.from(getModelClass()));
-        return (List<T>) em.createQuery(query).getResultList();
+        return findBy(null);
     }
     
     /**
@@ -117,24 +115,30 @@ public abstract class CrudService<T extends CrudIdentifiable> implements Seriali
     public List<T> findBy(Map<String, String> predicates) {
         CriteriaQuery<T> query = em.getCriteriaBuilder().createQuery(getModelClass());
         Root<T> from = query.from(getModelClass());
-        query.select(from).where(createPredicates(em.getCriteriaBuilder(), from, predicates));
-        return (List<T>) em.createQuery(query).getResultList();
-    }
-    
-    private <T> Predicate[] createPredicates(CriteriaBuilder criteriaBuilder, Root<T> root, Map<String, String> predicates) {
-        List<Predicate> ret = new ArrayList<>();
-        for (Map.Entry<String, String> entry : predicates.entrySet()) {
-            ret.add(QueryPredicate.createPredicate(criteriaBuilder, root, entry.getKey(), entry.getValue()));
+        query = query.select(from);
+        if (predicates != null) {
+            query.where(createPredicates(em.getCriteriaBuilder(), from, predicates));
         }
-        return ret.toArray(new Predicate[ret.size()]);
+        return (List<T>) em.createQuery(query).getResultList();
     }
     
     /**
      * Counts the number of entities.
      */
     public long countAll() {
+        return countBy(null);
+    }
+    
+    /**
+     * Counts the number of entities which match the predicates provided.
+     */
+    public long countBy(Map<String, String> predicates) {
         CriteriaQuery<Long> query = em.getCriteriaBuilder().createQuery(Long.class);
-        query.select(em.getCriteriaBuilder().count(query.from(getModelClass())));
+        Root<T> from = query.from(getModelClass());
+        query = query.select(em.getCriteriaBuilder().count(from));
+        if (predicates != null) {
+            query.where(createPredicates(em.getCriteriaBuilder(), from, predicates));
+        }
         return em.createQuery(query).getSingleResult();
     }
       
@@ -177,5 +181,13 @@ public abstract class CrudService<T extends CrudIdentifiable> implements Seriali
         query.from(getModelClass());
         em.createQuery(query).executeUpdate();
         em.flush();
+    }
+    
+    private <T> Predicate[] createPredicates(CriteriaBuilder criteriaBuilder, Root<T> root, Map<String, String> predicates) {
+        List<Predicate> ret = new ArrayList<>();
+        for (Map.Entry<String, String> entry : predicates.entrySet()) {
+            ret.add(QueryPredicate.createPredicate(criteriaBuilder, root, entry.getKey(), entry.getValue()));
+        }
+        return ret.toArray(new Predicate[ret.size()]);
     }
 }

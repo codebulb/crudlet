@@ -95,7 +95,7 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
                 return new ArrayList<>(findAllEntitiesBy(queryParameters));
             }
         }
-        return new ArrayList<>(findAllEntities());
+        return new ArrayList<>(findAllEntitiesBy(null));
     }
 
     private Map<String, String> getQueryParameters() {
@@ -124,6 +124,21 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
         else {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+    }
+    
+    /**
+     * Counts all entities.
+     */
+    @GET
+    @Path("/_count")
+    public long countAll() {
+        if (Options.ALLOW_FILTERS) {
+            Map<String, String> queryParameters = getQueryParameters();
+            if (!queryParameters.isEmpty()) {
+                return countAllEntitiesBy(queryParameters);
+            }
+        }
+        return countAllEntitiesBy(null);
     }
     
     /**
@@ -200,16 +215,7 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
     }
     
     /**
-     * Calls the save service to find all entities.
-     * 
-     * Extension point to add custom behavior (e.g. for nested resources).
-     */
-    protected List<T> findAllEntities() {
-        return getService().findAll();
-    }
-    
-    /**
-     * Calls the save service to find all entities which match the queryParameters provided
+     * Calls the service to find all entities which match the queryParameters provided.
      * 
      * Extension point to add custom behavior (e.g. for nested resources).
      */
@@ -218,12 +224,21 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
     }
     
     /**
-     * Calls the save service to find the entity with the id provided.
+     * Calls the service to find the entity with the id provided.
      * 
      * Extension point to add custom behavior (e.g. for nested resources).
      */
     protected T findEntityById(Long id) {
         return getService().findById(id);
+    }
+    
+    /**
+     * Calls the service to count all entities which match the queryParameters provided.
+     * 
+     * Extension point to add custom behavior (e.g. for nested resources).
+     */
+    protected long countAllEntitiesBy(Map<String, String> queryParameters) {
+        return getService().countBy(queryParameters);
     }
 
     /**
