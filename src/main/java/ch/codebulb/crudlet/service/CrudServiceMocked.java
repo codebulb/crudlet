@@ -58,4 +58,9 @@ public abstract class CrudServiceMocked<T extends CrudIdentifiable> extends Crud
     public void delete(Long id) {
         ENTITIES.remove(id);
     }
+
+    @Override
+    public List<T> findBy(Map<String, String> predicates) {
+        throw new UnsupportedOperationException("Custom filtering not implemented.");
+    }
 }
