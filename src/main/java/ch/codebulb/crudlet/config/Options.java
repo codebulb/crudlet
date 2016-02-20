@@ -1,5 +1,7 @@
 package ch.codebulb.crudlet.config;
 
+import java.sql.SQLIntegrityConstraintViolationException;
+
 /**
  * Contains all the global hooks to modify the framework's default behavior.
  */
