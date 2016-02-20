@@ -86,7 +86,7 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public List<T> findAll() {
-        return new ArrayList<>(getService().findAll());
+        return new ArrayList<>(findAllEntities());
     }
     
     /**
@@ -97,7 +97,7 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response findById(@PathParam("id") Long id) {
-        final T found = getService().findById(id);
+        final T found = findEntityById(id);
         if (found != null) {
             return Response.status(Response.Status.OK).entity(found).build();
         }
@@ -141,7 +141,7 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") Long id) {
-        getService().delete(id);
+        deleteEntity(id);
         return Response.status(Response.Status.NO_CONTENT).build();
     }
     
@@ -178,12 +178,29 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
             return new RestValidationConstraintErrorBuilder(ex).createResponse();
         }
     }
+    
+    /**
+     * Calls the save service to find all entities.
+     * 
+     * Extension point to add custom behavior (e.g. for nested resources).
+     */
+    protected List<T> findAllEntities() {
+        return getService().findAll();
+    }
+    
+    /**
+     * Calls the save service to find the entity with the id provided.
+     * 
+     * Extension point to add custom behavior (e.g. for nested resources).
+     */
+    protected T findEntityById(Long id) {
+        return getService().findById(id);
+    }
 
     /**
      * Calls the save service with the entity provided.
      * 
-     * @param entity the entity
-     * @return the respective {@link Response}
+     * Extension point to add custom behavior (e.g. for nested resources).
      */
     protected T saveEntity(T entity) {
         entity = getService().save(entity);
@@ -191,7 +208,18 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
     }
     
     /**
+     * Calls the delete entity service method.
+     * 
+     * Extension point to add custom behavior (e.g. for nested resources).
+     */
+    protected void deleteEntity(Long id) {
+        getService().delete(id);
+    }
+    
+    /**
      * Calls the delete all service method.
+     * 
+     * Extension point to add custom behavior (e.g. for nested resources).
      */
     protected void deleteAllEntities() {
         getService().deleteAll();
