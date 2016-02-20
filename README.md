@@ -266,7 +266,12 @@ If you want to lean more about building RESTful web applications based on vanill
 Crudlet maps these HTTP requests to persistence storage operations:
 
 * `GET /contextPath/model`: `service#findAll()`
-  * Searches for all entities of the given type.
+  * Searches for all entities of the given type; or for all entities of the fiven type which match all the given query parameters if the global `Options#ALLOW_FILTERS` flag is set to `true`. Allowed filters are:
+    * `=` String equals, e.g. GET `GET /contextPath/customers?city=Los%20Angeles`
+    * `=>` Long greater than or equals, e.g. GET `GET /contextPath/customers/1/payments?amount=>100`
+    * `=<` Long less than or equals, e.g. GET `GET /contextPath/customers/1/payments?amount=<100`
+    * `=~` String SQL "LIKE", e.g. GET `GET /contextPath/customers?address=~%Street`
+    * `Id=` Foreign key equals, e.g. GET `GET /contextPath/customers/1/payments?customerId=1` (this is rather used programmatically when implementing `CrudService` class to preconfigure nested service endpoints globally than by actual API clients)
   * returns HTTP 200 OK with list of entities
 * `GET /contextPath/model/:id`: `service#findById(id)`
   * Searches for the entity of the given type with the given id.
@@ -282,7 +287,7 @@ Crudlet maps these HTTP requests to persistence storage operations:
   * returns HTTP 204 NO CONTENT.
 * `DELETE /contextPath/model`: `service#deleteAll(id)`
   * Deletes all entities of the given type.
-  * returns HTTP 204 NO CONTENT; or HTTP 403 FORBIDDEN if the global `Options#DELETE_ALL` flag is set to `false`.
+  * returns HTTP 204 NO CONTENT; or HTTP 403 FORBIDDEN if the global `Options#ALLOW_DELETE_ALL` flag is set to `false`.
 
 These REST service endpoints are optimized for use with a [Restangular](https://github.com/mgonto/restangular) client.
 
@@ -307,7 +312,8 @@ A non-validation error returns with HTTP 400 BAD REQUEST and the following error
 You can e.g. use a `@Startup` `@Singleton` EJB bean to manipulate the following values on application startup to configure application behavior:
 * `Options#CORS`: Disable the allow-all "preflight" CORS request filter as well as the allow-all CORS response filter.
 * `Options#RETURN_EXCEPTION_BODY`: Disable user-friendly exception output.
-* `Options#DELETE_ALL`: Disable "DELETE ALL" service endpoint.
+* `Options#ALLOW_DELETE_ALL`: Disable "DELETE ALL" service endpoint.
+* `Options#ALLOW_FILTERS`: Disable GET filter by query parameter functionality.
 
 ## Project status and future plans
 Crudlet is currently experimental. I’d like to make some stability updates before releasing a proper 1.0 version. It may still already be useful for evaluation purposes, or as a skeleton to build your own solution.
