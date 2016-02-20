@@ -31,9 +31,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
-                    <!-- skip JavaDoc "strict checking" -->
-                    <!-- as in http://stackoverflow.com/a/23543181/1399395 -->
-                    <additionalparam>-Xdoclint:none</additionalparam>
                     <bottom><![CDATA[Copyright &#169; {inceptionYear}&#x2013;{currentYear}, <a href="http://www.codebulb.ch">codebulb.ch<a>. All rights reserved.]]></bottom>
                 </configuration>
                 <!-- attach JavaDoc for JitPack distribution -->
