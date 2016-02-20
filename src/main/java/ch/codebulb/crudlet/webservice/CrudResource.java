@@ -1,14 +1,14 @@
 package ch.codebulb.crudlet.webservice;
 
-import ch.codebulb.crudlet.model.errors.RestfulPersistenceValidationConstraintViolation;
+import ch.codebulb.crudlet.model.errors.RestValidationConstraintErrorBuilder;
 import ch.codebulb.crudlet.model.CrudEntity;
 import ch.codebulb.crudlet.model.CrudIdentifiable;
+import ch.codebulb.crudlet.model.errors.IllegalRequestExceptions;
+import ch.codebulb.crudlet.model.errors.RestErrorBuilder;
 import ch.codebulb.crudlet.service.CrudService;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -20,6 +20,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
@@ -105,39 +106,31 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
     }
     
     /**
-     * Saves / Inserts / Updates the entity provided and returns the updated entity (e.g. updated {@link CrudEntity#getId()} field.<p/>
+     * Insertsthe entity provided and returns the updated entity (e.g. updated {@link CrudEntity#getId()} field.<p/>
      * Returns an error if occurred during processing.
      */
     @POST
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response save(T entity) {
-        try {
-            entity = getService().save(entity);
-            return Response.status(Response.Status.OK).entity(entity).header("Link", buildLinkMap(uri.getPath(), entity.getId())).build();
-        } catch (ConstraintViolationException ex) {
-            return new RestfulPersistenceValidationConstraintViolation(ex).createResponse();
-        }
-    }
-    
-    @POST
-    @Path("/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response saveWithId(T entity) {
-        return save(entity);
-    }
-    
-    @PUT
-    @Path("/")
-    @Consumes(MediaType.APPLICATION_JSON)
     public Response add(T entity) {
+        if (entity.getId() != null) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
         return save(entity);
     }
     
+    /**
+     * Updates the entity provided and returns the updated entity (e.g. updated {@link CrudEntity#getId()} field.<p/>
+     * Returns an error if occurred during processing.
+     */
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response addWithId(T entity) {
+    public Response update(@PathParam("id") Long id, T entity) {
+        if (entity.getId() != null && entity.getId() != id) {
+            return new RestErrorBuilder(new IllegalRequestExceptions.BodyIdDoesNotMatchPathException()).createResponse();
+        }
+        entity.setId(id); // enforce id if null
         return save(entity);
     }
     
@@ -168,6 +161,52 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
     protected abstract CrudService<T> getService();
     
     /**
+     * Saves the entity provided and returns the respective response.
+     */
+    private Response save(T entity) {
+        boolean create = entity.getId() == null;
+        try {
+            entity = saveEntity(entity);
+            return buildSaveReply(entity, create);
+        } catch (ConstraintViolationException ex) {
+            return new RestValidationConstraintErrorBuilder(ex).createResponse();
+        }
+    }
+
+    /**
+     * Calls the save service with the entity provided.
+     * 
+     * @param entity the entity
+     * @return the respective {@link Response}
+     */
+    protected T saveEntity(T entity) {
+        entity = getService().save(entity);
+        return entity;
+    }
+
+    private Response buildSaveReply(T entity, boolean created) {
+        return Response.status(created ? Response.Status.CREATED : Response.Status.OK).entity(entity)
+                .header("Location", getRequestBasePath() + "/" + entity.getId()).build();
+    }
+
+    /**
+     * Gets the request uri without the last appended "id" param, whether that one is present or not.
+     */
+    private String getRequestBasePath() {
+        if (!uri.getPathParameters().containsKey("id")) {
+            return uri.getPath();
+        }
+        else {
+            StringBuilder sb = new StringBuilder(uri.getPathSegments().get(0).getPath());
+            for (PathSegment segment : uri.getPathSegments().subList(1, uri.getPathSegments().size() -1)) {
+                sb.append("/");
+                sb.append(segment.getPath());
+            }
+            return sb.toString();
+        }
+    }
+    
+    /**
      * Gets the <code>&#064;PathParam</code> with the key provided and casts it in the given type,
      * if necessary.
      *
@@ -183,18 +222,5 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
             return (T) Long.valueOf(ret);
         }
         return (T) ret;
-    }
-    
-    /**
-     * Builds the map containing a link to the edit URI of the newly-inserted entity.
-     *
-     * @param uriPath the uri base path
-     * @param id the id of the entity
-     * @return the link map
-     */
-    private static Map<String, String> buildLinkMap(String uriPath, Long id) {
-        Map<String, String> ret = new HashMap<>();
-        ret.put("edit", uriPath + "/" + id);
-        return ret;
     }
 }

@@ -27,6 +27,6 @@ public class CorsResponseFilter implements ContainerResponseFilter {
             responseCtx.getHeaders().addAll("Access-Control-Allow-Headers", "origin, content-type, accept, authorization");
         }
         // Explicitly name all headers used in any Resources
-        responseCtx.getHeaders().add("Access-Control-Expose-Headers", "Link");
+        responseCtx.getHeaders().add("Access-Control-Expose-Headers", "Location");
     }
 }

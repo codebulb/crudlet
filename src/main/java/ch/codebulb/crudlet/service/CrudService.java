@@ -126,16 +126,14 @@ public abstract class CrudService<T extends CrudIdentifiable> implements Seriali
      * <b>Note:</b> It's important to continue to work with the newly returned, updated entity rather than with the original entity.
      */
     public T save(@NotNull T entity) {        
-        
-            if (entity.getId() == null) {
-                    em.persist(entity);
-            }
-            else {
-                entity = em.merge(entity);
-            }
-            em.flush();
-            return entity;
-        
+        if (entity.getId() == null) {
+                em.persist(entity);
+        }
+        else {
+            entity = em.merge(entity);
+        }
+        em.flush();
+        return entity;
     }
     
     /**

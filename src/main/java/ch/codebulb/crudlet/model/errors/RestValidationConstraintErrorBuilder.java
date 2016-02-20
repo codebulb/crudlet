@@ -1,18 +1,22 @@
 package ch.codebulb.crudlet.model.errors;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import javax.validation.Path;
 
 /**
  * A wrapper to transform a {@link ConstraintViolationException} into a user-friendly
  * response body of a REST error response.
  */
-public class RestfulPersistenceValidationConstraintViolation extends RestfulConstraintViolation {
+public class RestValidationConstraintErrorBuilder extends RestErrorBuilder {
     
-    public RestfulPersistenceValidationConstraintViolation(ConstraintViolationException ex) {
+    public RestValidationConstraintErrorBuilder(ConstraintViolationException ex) {
+        super(ex);
+        
         Set<ConstraintViolation<?>> violations = ex.getConstraintViolations();
         
         if (violations.size() > 0) {
@@ -49,10 +53,23 @@ public class RestfulPersistenceValidationConstraintViolation extends RestfulCons
         }
         info.put("attributes", attributes);
         
-        
-        validationErrors.put(violation.getPropertyPath().toString(), info);
+        validationErrors.put(readPropertyName(violation), info);
         ret.put("validationErrors", validationErrors);
         
         return ret;
+    }
+
+    private static String readPropertyName(ConstraintViolation violation) {
+        Iterator<Path.Node> i = violation.getPropertyPath().iterator();
+        Path.Node current = i.next();
+        while (i.hasNext()) {
+            current = i.next();
+        }
+        if ("arg0".equals(current.getName())) {
+            return ".";
+        }
+        else {
+            return violation.getPropertyPath().toString();
+        }
     }
 }

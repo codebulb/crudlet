@@ -1,6 +1,6 @@
 package ch.codebulb.crudlet.config;
 
-import ch.codebulb.crudlet.model.errors.RestfulPersistenceIntegrityConstraintViolation;
+import ch.codebulb.crudlet.model.errors.RestErrorBuilder;
 import java.sql.SQLIntegrityConstraintViolationException;
 import javax.persistence.PersistenceException;
 import javax.transaction.RollbackException;
@@ -35,7 +35,7 @@ public class RestfulExceptionMapper implements ExceptionMapper<Exception> {
                     if (cause != null) { // The type of this exception is determined at runtime
                         cause = cause.getCause();
                         if (cause instanceof SQLIntegrityConstraintViolationException) {
-                            return new RestfulPersistenceIntegrityConstraintViolation(cause).createResponse();
+                            return new RestErrorBuilder(cause).createResponse();
                         }
                     }
                 }
@@ -43,7 +43,7 @@ public class RestfulExceptionMapper implements ExceptionMapper<Exception> {
         }
         
         ExceptionMapper exceptionMapper = providers.getExceptionMapper(ex.getClass());
-        if (exceptionMapper == null) {
+        if (exceptionMapper == null || exceptionMapper == this) {
             return Response.serverError().build();
         }
         else {
