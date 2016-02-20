@@ -6,7 +6,8 @@ import java.util.Map;
 import javax.ws.rs.core.Response;
 
 /**
- * Base class for wrappers for constraint violations.
+ * A for wrappers for exceptions which transforms them to a user-friendly
+ * response body of a REST error response.
  */
 public class RestErrorBuilder {
     protected Throwable exception;
