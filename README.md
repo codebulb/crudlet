@@ -266,13 +266,15 @@ If you want to lean more about building RESTful web applications based on vanill
 Crudlet maps these HTTP requests to persistence storage operations:
 
 * `GET /contextPath/model`: `service#findAll()`
-  * Searches for all entities of the given type; or for all entities of the fiven type which match all the given query parameters if the global `Options#ALLOW_FILTERS` flag is set to `true`. Allowed filters are:
+  * Searches for all entities of the given type; or searches for all entities of the fiven type which match all the given query parameters if the global `Options#ALLOW_FILTERS` flag is set to `true`. Allowed filters are:
     * `=` String equals, e.g. GET `GET /contextPath/customers?city=Los%20Angeles`
     * `=>` Long greater than or equals, e.g. GET `GET /contextPath/customers/1/payments?amount=>100`
     * `=<` Long less than or equals, e.g. GET `GET /contextPath/customers/1/payments?amount=<100`
     * `=~` String SQL "LIKE", e.g. GET `GET /contextPath/customers?address=~%Street`
     * `Id=` Foreign key equals, e.g. GET `GET /contextPath/customers/1/payments?customerId=1` (this is rather used programmatically when implementing `CrudService` class to preconfigure nested service endpoints globally than by actual API clients)
   * returns HTTP 200 OK with list of entities
+* `GET /contextPath/model/_count`: `service#countAll()`
+  * Counts all entities of the given type; or counts all entities of the fiven type which match all the given query parameters if the global `Options#ALLOW_FILTERS` flag is set to `true`. Allowed filters are the same as for `GET /contextPath/model`.
 * `GET /contextPath/model/:id`: `service#findById(id)`
   * Searches for the entity of the given type with the given id.
   * returns HTTP 200 OK with entity if found; or HTTP 404 NOT FOUND if entity is not found.
