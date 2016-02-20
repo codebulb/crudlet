@@ -17,5 +17,8 @@ public class Options {
     public static boolean RETURN_EXCEPTION_BODY = true;
     
     /** Global hook to disable the <code>DELETE /</code> (delete all) service endpoint. <code>false</code> means disabled; defaults to <code>true</code>. */
-    public static boolean DELETE_ALL = true;
+    public static boolean SUPPORT_DELETE_ALL = true;
+    
+    /** Global hook to disable the GET query filter. <code>false</code> means disabled; defaults to <code>true</code>. */
+    public static boolean SUPPORT_FILTERS = true;
 }

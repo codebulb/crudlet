@@ -3,11 +3,16 @@ package ch.codebulb.crudlet.service;
 import ch.codebulb.crudlet.model.CrudEntity;
 import ch.codebulb.crudlet.model.CrudIdentifiable;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 
@@ -98,13 +103,6 @@ public abstract class CrudService<T extends CrudIdentifiable> implements Seriali
     }
     
     /**
-     * Returns the entity with the {@link CrudEntity#getId()} provided.
-     */
-    public T findById(Long id) {
-        return em.find(getModelClass(), id);
-    }
-    
-    /**
      * Returns a List of all entities.
      */
     public List<T> findAll() {
@@ -114,12 +112,37 @@ public abstract class CrudService<T extends CrudIdentifiable> implements Seriali
     }
     
     /**
+     * Returns a List of all entities which match the predicates provided.
+     */
+    public List<T> findBy(Map<String, String> predicates) {
+        CriteriaQuery<T> query = em.getCriteriaBuilder().createQuery(getModelClass());
+        Root<T> from = query.from(getModelClass());
+        query.select(from).where(createPredicates(em.getCriteriaBuilder(), from, predicates));
+        return (List<T>) em.createQuery(query).getResultList();
+    }
+    
+    private <T> Predicate[] createPredicates(CriteriaBuilder criteriaBuilder, Root<T> root, Map<String, String> predicates) {
+        List<Predicate> ret = new ArrayList<>();
+        for (Map.Entry<String, String> entry : predicates.entrySet()) {
+            ret.add(QueryPredicate.createPredicate(criteriaBuilder, root, entry.getKey(), entry.getValue()));
+        }
+        return ret.toArray(new Predicate[ret.size()]);
+    }
+    
+    /**
      * Counts the number of entities.
      */
     public long countAll() {
         CriteriaQuery<Long> query = em.getCriteriaBuilder().createQuery(Long.class);
         query.select(em.getCriteriaBuilder().count(query.from(getModelClass())));
         return em.createQuery(query).getSingleResult();
+    }
+      
+    /**
+     * Returns the entity with the {@link CrudEntity#getId()} provided.
+     */
+    public T findById(Long id) {
+        return em.find(getModelClass(), id);
     }
     
     /**

@@ -9,7 +9,9 @@ import ch.codebulb.crudlet.model.errors.RestErrorBuilder;
 import ch.codebulb.crudlet.service.CrudService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -21,6 +23,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
@@ -86,8 +89,25 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public List<T> findAll() {
+        if (Options.SUPPORT_FILTERS) {
+            Map<String, String> queryParameters = getQueryParameters();
+            if (!queryParameters.isEmpty()) {
+                return new ArrayList<>(findAllEntitiesBy(queryParameters));
+            }
+        }
         return new ArrayList<>(findAllEntities());
     }
+
+    private Map<String, String> getQueryParameters() {
+            Map<String, String> ret = new HashMap<>();
+        MultivaluedMap<String, String> queryParams = uri.getQueryParameters();
+        
+        for (Map.Entry<String, List<String>> entrySet : queryParams.entrySet()) {
+            ret.put(entrySet.getKey(), entrySet.getValue().get(0));
+        }
+        return ret;
+    }
+
     
     /**
      * Returns the entity with the {@link CrudEntity#getId()} provided
@@ -151,7 +171,7 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
     @DELETE
     @Path("/")
     public Response deleteAll() {
-        if (!Options.DELETE_ALL) {
+        if (!Options.SUPPORT_DELETE_ALL) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         deleteAllEntities();
@@ -186,6 +206,15 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
      */
     protected List<T> findAllEntities() {
         return getService().findAll();
+    }
+    
+    /**
+     * Calls the save service to find all entities which match the queryParameters provided
+     * 
+     * Extension point to add custom behavior (e.g. for nested resources).
+     */
+    protected List<T> findAllEntitiesBy(Map<String, String> queryParameters) {
+        return getService().findBy(queryParameters);
     }
     
     /**
