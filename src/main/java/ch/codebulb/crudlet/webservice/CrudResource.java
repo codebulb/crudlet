@@ -142,7 +142,7 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
     }
     
     /**
-     * Insertsthe entity provided and returns the updated entity (e.g. updated {@link CrudEntity#getId()} field.<p/>
+     * Inserts the entity provided and returns the updated entity (e.g. updated {@link CrudEntity#getId()} field).<p/>
      * Returns an error if occurred during processing.
      */
     @POST
@@ -156,7 +156,7 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
     }
     
     /**
-     * Updates the entity provided and returns the updated entity (e.g. updated {@link CrudEntity#getId()} field.<p/>
+     * Updates the entity provided and returns the updated entity (e.g. updated {@link CrudEntity#getId()} field).<p/>
      * Returns an error if occurred during processing.
      */
     @PUT
@@ -220,7 +220,12 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
      * Extension point to add custom behavior (e.g. for nested resources).
      */
     protected List<T> findAllEntitiesBy(Map<String, String> queryParameters) {
-        return getService().findBy(queryParameters);
+        if (queryParameters == null) {
+            return getService().findAll();
+        }
+        else {
+            return getService().findBy(queryParameters);
+        }
     }
     
     /**
@@ -238,7 +243,12 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
      * Extension point to add custom behavior (e.g. for nested resources).
      */
     protected long countAllEntitiesBy(Map<String, String> queryParameters) {
-        return getService().countBy(queryParameters);
+        if (queryParameters == null) {
+            return getService().countAll();
+        }
+        else {
+            return getService().countBy(queryParameters);
+        }
     }
 
     /**

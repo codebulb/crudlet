@@ -11,7 +11,7 @@ import javax.json.JsonObjectBuilder;
 public class JsonHelper {
     
     /**
-     * Builds a {@link JsonObject} from an arbitrary nested Map.
+     * Builds a {@link JsonObject} from an arbitrarily nested Map.
      * All the leaves of the resulting json object are of type String.
      *
      * @param map the map

@@ -6,23 +6,29 @@ import java.util.Map;
 import javax.ws.rs.core.Response;
 
 /**
- * A for wrappers for exceptions which transforms them to a user-friendly
- * response body of a REST error response.
+ * A wrapper for exceptions which transforms them to a REST error response
+ * including a response body with a user-friendly, I18N-ready error message.
  */
 public class RestErrorBuilder {
     protected Throwable exception;
     protected Map responseBody = new HashMap<>();
-
+    
     public RestErrorBuilder(Throwable exception) {
+        this(exception, true);
+    }
+
+    protected RestErrorBuilder(Throwable exception, boolean buildDefaultResponseBody) {
         this.exception = exception;
-        this.responseBody = createResponseBody();
+        if (buildDefaultResponseBody) {
+            this.responseBody = createResponseBody(exception);
+        }
     }
     
     public Response createResponse() {
         return Response.status(Response.Status.BAD_REQUEST).entity(JsonHelper.build(responseBody)).build();
     }
     
-    private Map createResponseBody() {
+    private static Map createResponseBody(Throwable exception) {
         Map error = new HashMap();
         
         Map errorValue = new HashMap();

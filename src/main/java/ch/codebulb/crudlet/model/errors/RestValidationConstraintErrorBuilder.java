@@ -9,13 +9,13 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Path;
 
 /**
- * A wrapper to transform a {@link ConstraintViolationException} into a user-friendly
- * response body of a REST error response.
+ * A wrapper to transform a {@link ConstraintViolationException} into a REST error response
+ * including a response body with a user-friendly, I18N-ready error message.
  */
 public class RestValidationConstraintErrorBuilder extends RestErrorBuilder {
     
     public RestValidationConstraintErrorBuilder(ConstraintViolationException ex) {
-        super(ex);
+        super(ex, false);
         
         Set<ConstraintViolation<?>> violations = ex.getConstraintViolations();
         

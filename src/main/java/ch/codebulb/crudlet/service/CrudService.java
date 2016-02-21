@@ -103,14 +103,20 @@ public abstract class CrudService<T extends CrudIdentifiable> implements Seriali
     }
     
     /**
-     * Returns a List of all entities.
+     * Returns a List of all entities.<p/>
+     * 
+     * <b>Performance note:</b> This implementation is not optimized as it is built from a dynamic query.
+     * For production environments, implement this method explicitly by using a named query.
      */
     public List<T> findAll() {
         return findBy(null);
     }
     
     /**
-     * Returns a List of all entities which match the predicates provided.
+     * Returns a List of all entities which match the predicates provided.<p/>
+     * 
+     * <b>Performance note:</b> This implementation is not optimized as it is built from a dynamic query.
+     * For production environments, implement this method explicitly by using named queries.
      */
     public List<T> findBy(Map<String, String> predicates) {
         CriteriaQuery<T> query = em.getCriteriaBuilder().createQuery(getModelClass());
@@ -123,14 +129,20 @@ public abstract class CrudService<T extends CrudIdentifiable> implements Seriali
     }
     
     /**
-     * Counts the number of entities.
+     * Counts the number of entities.<p/>
+     * 
+     * <b>Performance note:</b> This implementation is not optimized as it is built from a dynamic query.
+     * For production environments, implement this method explicitly by using a named query.
      */
     public long countAll() {
         return countBy(null);
     }
     
     /**
-     * Counts the number of entities which match the predicates provided.
+     * Counts the number of entities which match the predicates provided.<p/>
+     * 
+     * <b>Performance note:</b> This implementation is not optimized as it is built from a dynamic query.
+     * For production environments, implement this method explicitly by using named queries.
      */
     public long countBy(Map<String, String> predicates) {
         CriteriaQuery<Long> query = em.getCriteriaBuilder().createQuery(Long.class);
@@ -151,6 +163,7 @@ public abstract class CrudService<T extends CrudIdentifiable> implements Seriali
     
     /**
      * Saves / Inserts / Updates the entity provided and returns the updated entity (e.g. updated {@link CrudEntity#getId()} field.<p/>
+     * 
      * <b>Note:</b> It's important to continue to work with the newly returned, updated entity rather than with the original entity.
      */
     public T save(@NotNull T entity) {        
@@ -174,7 +187,10 @@ public abstract class CrudService<T extends CrudIdentifiable> implements Seriali
     }
     
     /**
-     * Deletes all entities.
+     * Deletes all entities.<p/>
+     * 
+     * <b>Performance note:</b> This implementation is not optimized as it is built from a dynamic query.
+     * For production environments, implement this method explicitly by using a named query.
      */
     public void deleteAll() {
         CriteriaDelete<T> query = em.getCriteriaBuilder().createCriteriaDelete(getModelClass());
