@@ -360,8 +360,7 @@ Crudlet is currently experimental. I’d like to make some stability updates bef
 
 This is a private project I’ve started for my own pleasure and usage and to learn more about building (Ajax) REST APIs, and I have no plans for (commercial) support.
 
-You can also find more information about this project on its [**accompanying blog post**](http://www.codebulb.ch/2016/01/crudlet-ready-to-use-restangular-to-sql-crud-with-jax-rs.html) and in the API docs:
-* [**Docs**](http://codebulb.github.io/pages/crudlet/doc/)
+You can also find more information about this project on its [**accompanying blog post**](http://www.codebulb.ch/2016/01/crudlet-ready-to-use-restangular-to-sql-crud-with-jax-rs.html) and in the [**API docs**](http://codebulb.github.io/pages/crudlet/doc/).
 
 ## Version history
 * [V. 0.2](https://github.com/codebulb/crudlet/issues?utf8=%E2%9C%93&q=milestone%3A0.2)
