@@ -3,6 +3,39 @@ A simple, lean JAX-RS based framework to build CRUD REST-to-SQL web applications
 
 *Note: There is a port of the equivalent functionality for use on a Node.js server tech stack: [hapi-bookshelf-crud](https://github.com/codebulb/hapi-bookshelf-crud).*
 
+## Table of contents
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Installation](#installation)
+- [Ways to use it](#ways-to-use-it)
+- [Why you should use it](#why-you-should-use-it)
+- [Usage](#usage)
+  - [Server: Setup](#server-setup)
+    - [JAX-RS](#jax-rs)
+    - [Database](#database)
+    - [CORS](#cors)
+  - [Server: Implementation](#server-implementation)
+    - [Entity](#entity)
+    - [Service](#service)
+    - [Web service endpoint](#web-service-endpoint)
+  - [AngularJS client: Setup](#angularjs-client-setup)
+  - [AngularJS client: Implementation](#angularjs-client-implementation)
+    - [Validation](#validation)
+    - [Exceptions](#exceptions)
+- [By example](#by-example)
+- [Specification](#specification)
+  - [REST service endpoints](#rest-service-endpoints)
+    - [Validation errors](#validation-errors)
+    - [Other errors](#other-errors)
+  - [API](#api)
+  - [Global hooks (overrides)](#global-hooks-overrides)
+- [Project status and future plans](#project-status-and-future-plans)
+- [Version history](#version-history)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Installation
 Use [JitPack](https://jitpack.io/) to add its dependency to your Maven web application project:
 ```
