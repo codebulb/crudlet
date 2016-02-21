@@ -27,7 +27,7 @@ Visit [JitPack’s docs](https://jitpack.io/docs/) for more information.
 * Study the project's open source code as an example of best-practices REST CRUD and build your own solution on top of it.
 
 ## Why you should use it
-* Extremely small footprint (JAR <= 20KB), no dependencies other than plain Java EE 7.
+* Extremely small footprint (JAR <= 30KB), no dependencies other than plain Java EE 7.
 * Human-readable documentation (here and in the [API docs](http://codebulb.github.io/pages/crudlet/doc/)).
 * Free & Open source ([New BSD license](https://github.com/codebulb/crudlet/blob/master/LICENSE)).
 
@@ -311,6 +311,9 @@ A non-validation error returns with HTTP 400 BAD REQUEST and the following error
   * `exception`: `exception.class.name`
   * `detailMessage`: `exception.message`
 
+### API
+The API is documented in the project's [**JavaDoc**](http://codebulb.github.io/pages/crudlet/doc/).
+
 ### Global hooks (overrides)
 You can e.g. use a `@Startup` `@Singleton` EJB bean to manipulate the following values on application startup to configure application behavior:
 * `Options#CORS`: Disable the allow-all "preflight" CORS request filter as well as the allow-all CORS response filter.
@@ -325,5 +328,11 @@ Crudlet is currently experimental. I’d like to make some stability updates bef
 This is a private project I’ve started for my own pleasure and usage and to learn more about building (Ajax) REST APIs, and I have no plans for (commercial) support.
 
 You can also find more information about this project on its [**accompanying blog post**](http://www.codebulb.ch/2016/01/crudlet-ready-to-use-restangular-to-sql-crud-with-jax-rs.html) and in the API docs:
-* [**V. 0.1 docs**](http://codebulb.github.io/pages/crudlet/doc/0.1/)
-* [**Current SNAPSHOT docs**](http://codebulb.github.io/pages/crudlet/doc/)
+* [**Docs**](http://codebulb.github.io/pages/crudlet/doc/)
+
+## Version history
+* [V. 0.2](https://github.com/codebulb/crudlet/issues?utf8=%E2%9C%93&q=milestone%3A0.2)
+  * REST endpoints fixed / cleaned up up / enhanced: Support for DELETE ALL, COUNT, query parameter filters added.
+  * Miscellaneous fixes / enhancements.
+* V. 0.1
+  * First release
