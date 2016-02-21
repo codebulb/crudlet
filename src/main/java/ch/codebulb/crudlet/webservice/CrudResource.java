@@ -131,14 +131,18 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
      */
     @GET
     @Path("/_count")
-    public long countAll() {
+    public Response countAll() {
+        if (!Options.ALLOW_COUNT) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+        
         if (Options.ALLOW_FILTERS) {
             Map<String, String> queryParameters = getQueryParameters();
             if (!queryParameters.isEmpty()) {
-                return countAllEntitiesBy(queryParameters);
+                return Response.status(Response.Status.OK).entity(countAllEntitiesBy(queryParameters)).build();
             }
         }
-        return countAllEntitiesBy(null);
+        return Response.status(Response.Status.OK).entity(countAllEntitiesBy(null)).build();
     }
     
     /**
@@ -189,6 +193,7 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
         if (!Options.ALLOW_DELETE_ALL) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
+        
         deleteAllEntities();
         return Response.status(Response.Status.NO_CONTENT).build();
     }

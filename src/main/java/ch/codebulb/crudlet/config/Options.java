@@ -21,4 +21,7 @@ public class Options {
     
     /** Global hook to disable the GET query filter. <code>false</code> means disabled; defaults to <code>true</code>. */
     public static boolean ALLOW_FILTERS = true;
+    
+    /** Global hook to disable the GET COUNT service endpoint. <code>false</code> means disabled; defaults to <code>true</code>. */
+    public static boolean ALLOW_COUNT = true;
 }
