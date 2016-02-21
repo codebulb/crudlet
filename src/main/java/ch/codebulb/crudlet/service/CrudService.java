@@ -193,8 +193,21 @@ public abstract class CrudService<T extends CrudIdentifiable> implements Seriali
      * For production environments, implement this method explicitly by using a named query.
      */
     public void deleteAll() {
+        deleteBy(null);
+    }
+    
+    /**
+     * Deletes all entities which match the predicates provided.<p/>
+     * 
+     * <b>Performance note:</b> This implementation is not optimized as it is built from a dynamic query.
+     * For production environments, implement this method explicitly by using named queries.
+     */
+    public void deleteBy(Map<String, String> predicates) {
         CriteriaDelete<T> query = em.getCriteriaBuilder().createCriteriaDelete(getModelClass());
-        query.from(getModelClass());
+        Root<T> from = query.from(getModelClass());
+        if (predicates != null) {
+            query.where(createPredicates(em.getCriteriaBuilder(), from, predicates));
+        }
         em.createQuery(query).executeUpdate();
         em.flush();
     }

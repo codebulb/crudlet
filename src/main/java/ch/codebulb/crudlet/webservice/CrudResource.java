@@ -194,7 +194,14 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         
-        deleteAllEntities();
+        if (Options.ALLOW_FILTERS) {
+            Map<String, String> queryParameters = getQueryParameters();
+            if (!queryParameters.isEmpty()) {
+                deleteAllEntitiesBy(queryParameters);
+                return Response.status(Response.Status.NO_CONTENT).build();
+            }
+        }
+        deleteAllEntitiesBy(null);
         return Response.status(Response.Status.NO_CONTENT).build();
     }
     
@@ -276,12 +283,17 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
     }
     
     /**
-     * Calls the delete all service method.
+     * Calls the service to delete all entities which match the queryParameters provided.
      * 
      * Extension point to add custom behavior (e.g. for nested resources).
      */
-    protected void deleteAllEntities() {
-        getService().deleteAll();
+    protected void deleteAllEntitiesBy(Map<String, String> queryParameters) {
+        if (queryParameters == null) {
+            getService().deleteAll();
+        }
+        else {
+            getService().deleteBy(queryParameters);
+        }
     }
 
     private Response buildSaveReply(T entity, boolean created) {
