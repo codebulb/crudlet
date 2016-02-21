@@ -298,7 +298,7 @@ Note: A JAX-RS based server implicitly allows optional trailing slashes (`/`) fo
 #### Validation errors
 A validation error returns with HTTP 400 BAD REQUEST and the following error information (as far as it is available) in the body:
 * `validationError`
-  * (for every `constraintViolationException.constraintViolation`): [`violation.propertyPath.toString()`]
+  * (for every `constraintViolationException.constraintViolation`): [`violation.propertyPath.toString()`]; or, if the entire entity is erroneous (e.g. `null`): `.` (a single dot)
     * `constraintClassName`: `violation.constraintDescriptor.annotation.annotationType().name`
     * `messageTemplate`: `violation.messageTemplate`
     * `invalidValue`: `violation.invalidValue`
