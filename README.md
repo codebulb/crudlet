@@ -266,7 +266,7 @@ If you want to lean more about building RESTful web applications based on vanill
 Crudlet maps these HTTP requests to persistence storage operations:
 
 * `GET /contextPath/model`: `service#findAll()`
-  * Searches for all entities of the given type; or searches for all entities of the fiven type which match all the given query parameters if the global `Options#ALLOW_FILTERS` flag is set to `true`. Allowed filters are:
+  * Searches for all entities of the given type; or searches for all entities of the given type which match all the given query parameters if the global `Options#ALLOW_FILTERS` flag is set to `true`. Allowed filters are:
     * `=` String equals, e.g. GET `GET /contextPath/customers?city=Los%20Angeles`
     * `=>` Long greater than or equals, e.g. GET `GET /contextPath/customers/1/payments?amount=>100`
     * `=<` Long less than or equals, e.g. GET `GET /contextPath/customers/1/payments?amount=<100`
@@ -274,7 +274,8 @@ Crudlet maps these HTTP requests to persistence storage operations:
     * `Id=` Foreign key equals, e.g. GET `GET /contextPath/customers/1/payments?customerId=1` (this is rather used programmatically when implementing `CrudService` class to preconfigure nested service endpoints globally than by actual API clients)
   * returns HTTP 200 OK with list of entities
 * `GET /contextPath/model/_count`: `service#countAll()`
-  * Counts all entities of the given type; or counts all entities of the fiven type which match all the given query parameters if the global `Options#ALLOW_FILTERS` flag is set to `true`. Allowed filters are the same as for `GET /contextPath/model`.
+  * Counts all entities of the given type; or counts all entities of the given type which match all the given query parameters if the global `Options#ALLOW_FILTERS` flag is set to `true`. Allowed filters are the same as for `GET /contextPath/model`.
+  * returns HTTP 200 OK with the calculation output; or HTTP 403 FORBIDDEN if the global `Options#ALLOW_COUNT` flag is set to `false`.
 * `GET /contextPath/model/:id`: `service#findById(id)`
   * Searches for the entity of the given type with the given id.
   * returns HTTP 200 OK with entity if found; or HTTP 404 NOT FOUND if entity is not found.
@@ -288,7 +289,7 @@ Crudlet maps these HTTP requests to persistence storage operations:
   * Deletes the entity with the id provided or does nothing if no entity with the id provided exists.
   * returns HTTP 204 NO CONTENT.
 * `DELETE /contextPath/model`: `service#deleteAll(id)`
-  * Deletes all entities of the given type.
+  * Deletes all entities of the given type unless the global `Options#ALLOW_DELETE_ALL` flag is set to `false`.
   * returns HTTP 204 NO CONTENT; or HTTP 403 FORBIDDEN if the global `Options#ALLOW_DELETE_ALL` flag is set to `false`.
 
 These REST service endpoints are optimized for use with a [Restangular](https://github.com/mgonto/restangular) client.
@@ -316,6 +317,7 @@ You can e.g. use a `@Startup` `@Singleton` EJB bean to manipulate the following 
 * `Options#RETURN_EXCEPTION_BODY`: Disable user-friendly exception output.
 * `Options#ALLOW_DELETE_ALL`: Disable "DELETE ALL" service endpoint.
 * `Options#ALLOW_FILTERS`: Disable GET filter by query parameter functionality.
+* `Options#ALLOW_COUNT`: Disable "GET COUNT" service endpoint.
 
 ## Project status and future plans
 Crudlet is currently experimental. I’d like to make some stability updates before releasing a proper 1.0 version. It may still already be useful for evaluation purposes, or as a skeleton to build your own solution.
