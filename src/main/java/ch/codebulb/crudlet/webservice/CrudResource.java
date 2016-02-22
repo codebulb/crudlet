@@ -98,7 +98,7 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
         return new ArrayList<>(findAllEntitiesBy(null));
     }
 
-    private Map<String, String> getQueryParameters() {
+    Map<String, String> getQueryParameters() {
             Map<String, String> ret = new HashMap<>();
         MultivaluedMap<String, String> queryParams = uri.getQueryParameters();
         
@@ -175,16 +175,6 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
     }
     
     /**
-     * Deletes the entity with the {@link CrudEntity#getId()} provided.
-     */
-    @DELETE
-    @Path("/{id}")
-    public Response delete(@PathParam("id") Long id) {
-        deleteEntity(id);
-        return Response.status(Response.Status.NO_CONTENT).build();
-    }
-    
-    /**
      * Deletes all entities.
      */
     @DELETE
@@ -202,6 +192,16 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
             }
         }
         deleteAllEntitiesBy(null);
+        return Response.status(Response.Status.NO_CONTENT).build();
+    }
+       
+    /**
+     * Deletes the entity with the {@link CrudEntity#getId()} provided.
+     */
+    @DELETE
+    @Path("/{id}")
+    public Response delete(@PathParam("id") Long id) {
+        deleteEntity(id);
         return Response.status(Response.Status.NO_CONTENT).build();
     }
     
@@ -304,7 +304,7 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
     /**
      * Gets the request uri without the last appended "id" param, whether that one is present or not.
      */
-    private String getRequestBasePath() {
+    String getRequestBasePath() {
         if (!uri.getPathParameters().containsKey("id")) {
             return uri.getPath();
         }
