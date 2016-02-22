@@ -20,7 +20,7 @@ import java.util.Map;
  * <code>@SessionScoped</code> bean, and later change to a true
  * {@link CrudService} without any interface changes.</p>
  */
-// as in https://github.com/codebulb/crudfaces/blob/master/src/main/java/ch/codebulb/crudfaces/service/CrudServiceMocked.java
+// based on https://github.com/codebulb/crudfaces/blob/master/src/main/java/ch/codebulb/crudfaces/service/CrudServiceMocked.java
 // TODO Add cascading support
 public abstract class CrudServiceMocked<T extends CrudIdentifiable> extends CrudService<T> {  
     private final Map<Long, T> ENTITIES = new HashMap<>();
@@ -66,6 +66,11 @@ public abstract class CrudServiceMocked<T extends CrudIdentifiable> extends Crud
 
     @Override
     public long countBy(Map<String, String> predicates) {
+        throw new UnsupportedOperationException("Custom filtering not implemented.");
+    }
+
+    @Override
+    public void deleteBy(Map<String, String> predicates) {
         throw new UnsupportedOperationException("Custom filtering not implemented.");
     }
 }

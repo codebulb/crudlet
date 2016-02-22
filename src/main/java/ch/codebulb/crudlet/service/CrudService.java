@@ -79,7 +79,7 @@ public class CustomerService extends CrudService&lt;Customer&gt; {
  * implementation as e.g. a <code>@SessionScoped</code> bean, and later change
  * to a true <code>CrudService</code> without any interface changes.</p>
  */
-// as in https://github.com/codebulb/crudfaces/blob/master/src/main/java/ch/codebulb/crudfaces/service/CrudService.java
+// based on https://github.com/codebulb/crudfaces/blob/master/src/main/java/ch/codebulb/crudfaces/service/CrudService.java
 @Transactional(Transactional.TxType.REQUIRED)
 public abstract class CrudService<T extends CrudIdentifiable> implements Serializable {
     protected EntityManager em;
