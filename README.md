@@ -24,7 +24,6 @@ A simple, lean JAX-RS based framework to build CRUD REST-to-SQL web applications
   - [AngularJS client: Implementation](#angularjs-client-implementation)
     - [Validation](#validation)
     - [Exceptions](#exceptions)
-- [By example](#by-example)
 - [Specification](#specification)
   - [REST service endpoints](#rest-service-endpoints)
     - [Validation errors](#validation-errors)
@@ -289,11 +288,6 @@ var translations = {
 ```
 Because in a real-world production environment, exposing details of an exception may be a security issue, you can suppress this user-friendly exception detail output by setting the `Options#RETURN_EXCEPTION_BODY` boolean flag to false.
 
-## By example
-For a complete example, please take a look at the [**example application**](https://github.com/codebulb/crudletdemo). It also shows you how to easily implement a `CrudResource` for nested resources.
-
-If you want to lean more about building RESTful web applications based on vanilla JAX-RS and Restangular, you may enjoy a [blog post I’ve written about it](http://www.codebulb.ch/2015/09/restful-software-requirements-specification-part-1.html); it features a complete example application as well.
-
 ## Specification
 ### REST service endpoints
 Crudlet maps these HTTP requests to persistence storage operations:
@@ -364,7 +358,7 @@ You can also find more information about this project on its [**accompanying blo
 
 ## Version history
 * [V. 0.2](https://github.com/codebulb/crudlet/issues?utf8=%E2%9C%93&q=milestone%3A0.2)
-  * REST endpoints fixed / cleaned up up / enhanced: Support for DELETE ALL, COUNT, query parameter filters added.
+  * REST endpoints fixed / cleaned up / enhanced: Support for DELETE ALL, COUNT, query parameter filters added.
   * Miscellaneous fixes / enhancements.
 * V. 0.1
   * First release
