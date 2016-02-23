@@ -50,7 +50,7 @@
 <h2><a id="user-content-why-you-should-use-it" class="anchor" href="#why-you-should-use-it" aria-hidden="true"></a>Why you should use it</h2>
 
 <ul>
-<li>Extremely small footprint (JAR &lt;= 30KB), no dependencies other than plain Java EE 7.</li>
+<li>Extremely small footprint (JAR &lt; 30KB), no dependencies other than plain Java EE 7.</li>
 <li>Human-readable documentation (here and in the <a href="http://codebulb.github.io/pages/crudlet/doc/">API docs</a>).</li>
 <li>Free &amp; Open source (<a href="https://github.com/codebulb/crudlet/blob/master/LICENSE">New BSD license</a>).</li>
 </ul>
@@ -224,7 +224,6 @@ public class CustomerResource extends CrudResource&lt;Customer&gt; {
 <pre><code>.config(['$translateProvider', function ($translateProvider) {
   $translateProvider.translations('en', translations);
   $translateProvider.preferredLanguage('en');
-  $translateProvider.useMissingTranslationHandlerLog();
   $translateProvider.useSanitizeValueStrategy('sanitize');
 }])
 </code></pre>
@@ -320,12 +319,6 @@ public class CustomerResource extends CrudResource&lt;Customer&gt; {
 
 <p>Because in a real-world production environment, exposing details of an exception may be a security issue, you can suppress this user-friendly exception detail output by setting the <code>Options#RETURN_EXCEPTION_BODY</code> boolean flag to false.</p>
 
-<h2><a id="user-content-by-example" class="anchor" href="#by-example" aria-hidden="true"></a>By example</h2>
-
-<p>For a complete example, please take a look at the <a href="https://github.com/codebulb/crudletdemo"><strong>example application</strong></a>. It also shows you how to easily implement a <code>CrudResource</code> for nested resources.</p>
-
-<p>If you want to lean more about building RESTful web applications based on vanilla JAX-RS and Restangular, you may enjoy a <a href="http://www.codebulb.ch/2015/09/restful-software-requirements-specification-part-1.html">blog post I’ve written about it</a>; it features a complete example application as well.</p>
-
 <h2><a id="user-content-specification" class="anchor" href="#specification" aria-hidden="true"></a>Specification</h2>
 
 <h3><a id="user-content-rest-service-endpoints" class="anchor" href="#rest-service-endpoints" aria-hidden="true"></a>REST service endpoints</h3>
@@ -371,7 +364,7 @@ public class CustomerResource extends CrudResource&lt;Customer&gt; {
 <li>Updates the existing entity.</li>
 <li>returns HTTP 200 OK with updated entity (e.g. new id) and <code>Location</code> header with content “/contextPath/model/:id”; or HTTP 400 BAD REQUEST with error information on validation error / if entity's <code>id</code> field is not <code>null</code> nor matches the <code>:id</code> path parameter.</li>
 </ul></li>
-<li><code>DELETE /contextPath/model</code>: <code>service#deleteAll(id)</code>
+<li><code>DELETE /contextPath/model</code>: <code>service#deleteAll()</code>
 
 <ul>
 <li>Deletes all entities of the given type; or deletes all entities of the given type which match all the given query parameters if the global <code>Options#ALLOW_FILTERS</code> flag is set to <code>true</code>. Allowed filters are the same as for <code>GET /contextPath/model</code>.</li>
@@ -451,7 +444,7 @@ public class CustomerResource extends CrudResource&lt;Customer&gt; {
 <li><a href="https://github.com/codebulb/crudlet/issues?utf8=%E2%9C%93&amp;q=milestone%3A0.2">V. 0.2</a>
 
 <ul>
-<li>REST endpoints fixed / cleaned up up / enhanced: Support for DELETE ALL, COUNT, query parameter filters added.</li>
+<li>REST endpoints fixed / cleaned up / enhanced: Support for DELETE ALL, COUNT, query parameter filters added.</li>
 <li>Miscellaneous fixes / enhancements.</li>
 </ul></li>
 <li>V. 0.1
