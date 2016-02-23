@@ -59,7 +59,7 @@ Visit [JitPack’s docs](https://jitpack.io/docs/) for more information.
 * Study the project's open source code as an example of best-practices REST CRUD and build your own solution on top of it.
 
 ## Why you should use it
-* Extremely small footprint (JAR <= 30KB), no dependencies other than plain Java EE 7.
+* Extremely small footprint (JAR < 30KB), no dependencies other than plain Java EE 7.
 * Human-readable documentation (here and in the [API docs](http://codebulb.github.io/pages/crudlet/doc/)).
 * Free & Open source ([New BSD license](https://github.com/codebulb/crudlet/blob/master/LICENSE)).
 
@@ -312,7 +312,7 @@ Crudlet maps these HTTP requests to persistence storage operations:
 * `PUT /contextPath/model/:id` with entity: `service#save(entity)`
   * Updates the existing entity.
   * returns HTTP 200 OK with updated entity (e.g. new id) and `Location` header with content “/contextPath/model/:id”; or HTTP 400 BAD REQUEST with error information on validation error / if entity's `id` field is not `null` nor matches the `:id` path parameter.
-* `DELETE /contextPath/model`: `service#deleteAll(id)`
+* `DELETE /contextPath/model`: `service#deleteAll()`
   * Deletes all entities of the given type; or deletes all entities of the given type which match all the given query parameters if the global `Options#ALLOW_FILTERS` flag is set to `true`. Allowed filters are the same as for `GET /contextPath/model`.
   * returns HTTP 204 NO CONTENT; or HTTP 403 FORBIDDEN if the global `Options#ALLOW_DELETE_ALL` flag is set to `false`.
 * `DELETE /contextPath/model/:id`: `service#delete(id)`
