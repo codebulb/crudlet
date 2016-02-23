@@ -1,6 +1,8 @@
 # crudlet
 A simple, lean JAX-RS based framework to build CRUD REST-to-SQL web applications running on a Java web application server, e.g. as an AngularJS backend.
 
+[![](https://jitpack.io/v/codebulb/crudlet.svg)](https://jitpack.io/#codebulb/crudlet) [![Build Status](https://travis-ci.org/codebulb/crudlet.svg?branch=master)](https://travis-ci.org/codebulb/crudlet)
+
 *Note: There is a port of the equivalent functionality for use on a Node.js server tech stack: [hapi-bookshelf-crud](https://github.com/codebulb/hapi-bookshelf-crud).*
 
 ## Table of contents
