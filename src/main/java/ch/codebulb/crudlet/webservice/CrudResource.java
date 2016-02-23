@@ -153,7 +153,7 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response add(T entity) {
-        if (entity.getId() != null) {
+        if (entity != null && entity.getId() != null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
         return save(entity);
@@ -217,7 +217,7 @@ public abstract class CrudResource<T extends CrudIdentifiable> {
      * Saves the entity provided and returns the respective response.
      */
     private Response save(T entity) {
-        boolean create = entity.getId() == null;
+        boolean create = entity == null || entity.getId() == null;
         try {
             entity = saveEntity(entity);
             return buildSaveReply(entity, create);

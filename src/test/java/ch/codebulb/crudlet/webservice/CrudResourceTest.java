@@ -2,10 +2,12 @@ package ch.codebulb.crudlet.webservice;
 
 import ch.codebulb.crudlet.SimpleEntity;
 import ch.codebulb.crudlet.config.Options;
-import ch.codebulb.crudlet.model.errors.IllegalRequestExceptions;
 import ch.codebulb.crudlet.service.CrudService;
+import java.util.HashSet;
 import java.util.Map;
-import javax.json.JsonObject;
+import java.util.Set;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -15,6 +17,7 @@ import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.notNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -32,6 +35,8 @@ public class CrudResourceTest {
     private static final Long DUMMY_ENTITY_ID = 1l;
     private SimpleEntity dummyEntity;
     
+    public final ConstraintViolationException constraintViolationException = mock(ConstraintViolationException.class);
+    
     @Before
     public void init() {
         // Setup application
@@ -46,11 +51,15 @@ public class CrudResourceTest {
         // Setup mock service
         when(service.findById(DUMMY_ENTITY_ID)).thenReturn(new SimpleEntity());
         when(service.findById(0l)).thenReturn(null);
-        when(service.save(any(SimpleEntity.class))).thenReturn(new SimpleEntity());
+        when(service.save(notNull(SimpleEntity.class))).thenReturn(new SimpleEntity());
+        when(service.save(null)).thenThrow(constraintViolationException);
         
         // Setup other mocks
         instance.uri = mock(UriInfo.class);
         when(instance.uri.getQueryParameters()).thenReturn(new MultivaluedHashMap<String, String>());
+        
+        Set<ConstraintViolation<?>> constraintViolations = new HashSet<>();
+        when(constraintViolationException.getConstraintViolations()).thenReturn(constraintViolations);
         
         // Setup dummies
         dummyEntity = new SimpleEntity();
@@ -151,6 +160,15 @@ public class CrudResourceTest {
     }
     
     @Test
+    public void testAddNull() {
+        Response response = instance.add(null);
+        verify(service).save(null);
+        assertEquals(Response.Status.BAD_REQUEST, response.getStatusInfo());
+        assertNotNull(response.getEntity()); // TODO Test correct error response
+        assertNull(response.getHeaders().get("Location"));
+    }
+    
+    @Test
     public void testUpdate() {
         dummyEntity.setId(1l);
         Response response = instance.update(1l, dummyEntity);
@@ -161,7 +179,7 @@ public class CrudResourceTest {
     }
     
     @Test
-    public void testUpdateWithoutBody() {
+    public void testUpdateWithoutBodyId() {
         // with empty body
         Response response = instance.update(1l, dummyEntity);
         verify(service).save(dummyEntity);
