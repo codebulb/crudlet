@@ -21,15 +21,12 @@ public class RestfulExceptionMapper implements ExceptionMapper<Exception> {
     @Override 
     public Response toResponse(Exception ex) {
         if (Options.RETURN_EXCEPTION_BODY) {
-            if (ex instanceof RollbackException) {
+            if (ex instanceof PersistenceException) {
                 Throwable cause = ex.getCause();
-                if (cause instanceof PersistenceException) {
+                if (cause != null) { // The type of this exception is determined at runtime
                     cause = cause.getCause();
-                    if (cause != null) { // The type of this exception is determined at runtime
-                        cause = cause.getCause();
-                        if (cause instanceof SQLIntegrityConstraintViolationException) {
-                            return new RestErrorBuilder(cause).createResponse();
-                        }
+                    if (cause instanceof SQLIntegrityConstraintViolationException) {
+                        return new RestErrorBuilder(cause).createResponse();
                     }
                 }
             }
