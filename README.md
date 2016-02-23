@@ -203,7 +203,6 @@ You also potentially want to install and setup the [angular-translate](http://an
 .config(['$translateProvider', function ($translateProvider) {
   $translateProvider.translations('en', translations);
   $translateProvider.preferredLanguage('en');
-  $translateProvider.useMissingTranslationHandlerLog();
   $translateProvider.useSanitizeValueStrategy('sanitize');
 }])
 ```
