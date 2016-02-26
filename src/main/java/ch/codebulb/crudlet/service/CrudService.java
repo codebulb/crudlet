@@ -26,9 +26,9 @@ import javax.validation.constraints.NotNull;
  * This service realizes the basic CRUD operations:</p>
  * <ul>
  * <li><b>Create (C):</b> <code>create()</code> + <code>save()</code></li>
- * <li><b>Read (R)</b>: <code>findById(Long id)</code> / <code>findAll()</code></li>
+ * <li><b>Read (R)</b>: <code>findById(Long id)</code> / <code>findAll()</code> / <code>findBy()</code> / <code>countAll()</code> / <code>countBy()</code></li>
  * <li><b>Update (U)</b>: <code>save()</code></li>
- * <li><b>Delete (D)</b>: <code>delete()</code></li>
+ * <li><b>Delete (D)</b>: <code>delete()</code> / <code>deleteAll()</code> / <code>deleteBy()</code></li>
  * </ul>
  * <p>
  * In order to create a CRUD service for an entity type, make sure the entity

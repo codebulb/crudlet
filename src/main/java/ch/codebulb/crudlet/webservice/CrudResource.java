@@ -35,14 +35,57 @@ import javax.ws.rs.core.UriInfo;
  * including out-of-the-box support for returning I18N-ready model validation error messages.
  * </p>
  * <p>
- * This service realizes the basic REST operations:</p>
+ * This service realizes these REST operations:</p>
  * <ul>
- * <li><code>GET /contextPath/model</code>: Searches for all entities of the given type</li>
- * <li><code>GET /contextPath/model/:id</code>: Searches for the entities of the given type with the given id</li>
- * <li><code>PUT /contextPath/model/</code> or <code>PUT /contextPath/model/:id</code> or 
- * <code>POST /contextPath/model/</code> or <code>POST /contextPath/model/:id</code>: 
- * Saves the entity for the first time or updates the existing entity, based on the presence of an id on the entity</li>
- * <li><code>DELETE /contextPath/model/:id</code>: Deletes the entity with the id provided</li>
+ * <li><code>GET /contextPath/model</code>: <code>service#findAll()</code>
+ * 
+ * <ul>
+ * <li>Searches for all entities of the given type; or searches for all entities of the given type which match all the given query parameters if the global <code>Options#ALLOW_FILTERS</code> flag is set to <code>true</code>. Allowed filters are:
+ * 
+ * <ul>
+ * <li><code>=</code> String equals, e.g. GET <code>GET /contextPath/customers?city=Los%20Angeles</code></li>
+ * <li><code>=&gt;</code> Long greater than or equals, e.g. GET <code>GET /contextPath/customers/1/payments?amount=&gt;100</code></li>
+ * <li><code>=&lt;</code> Long less than or equals, e.g. GET <code>GET /contextPath/customers/1/payments?amount=&lt;100</code></li>
+ * <li><code>=~</code> String SQL "LIKE", e.g. GET <code>GET /contextPath/customers?address=~%Street</code></li>
+ * <li><code>Id=</code> Foreign key equals, e.g. GET <code>GET /contextPath/customers/1/payments?customerId=1</code> (this is rather used programmatically when implementing <code>CrudService</code> class to preconfigure nested service endpoints globally than by actual API clients)</li>
+ * </ul></li>
+ * <li>returns HTTP 200 OK with list of entities</li>
+ * </ul></li>
+ * <li><code>GET /contextPath/model/_count</code>: <code>service#countAll()</code>
+ * 
+ * <ul>
+ * <li>Counts all entities of the given type; or counts all entities of the given type which match all the given query parameters if the global <code>Options#ALLOW_FILTERS</code> flag is set to <code>true</code>. Allowed filters are the same as for <code>GET /contextPath/model</code>.</li>
+ * <li>returns HTTP 200 OK with the calculation output; or HTTP 403 FORBIDDEN if the global <code>Options#ALLOW_COUNT</code> flag is set to <code>false</code>.</li>
+ * </ul></li>
+ * <li><code>GET /contextPath/model/:id</code>: <code>service#findById(id)</code>
+ * 
+ * <ul>
+ * <li>Searches for the entity of the given type with the given id.</li>
+ * <li>returns HTTP 200 OK with entity if found; or HTTP 404 NOT FOUND if entity is not found.</li>
+ * </ul></li>
+ * <li><code>POST /contextPath/model</code> with entity: <code>service#save(entity)</code>
+ * <ul>
+ * <li>Saves the entity for the first time.</li>
+ * <li>returns HTTP 200 OK with saved entity (as returned by the insert operation) and <code>Location</code> header with content “/contextPath/model/:id”; or HTTP 400 BAD REQUEST with error information on validation error / if entity's <code>id</code> field is not <code>null</code>.</li>
+ * </ul></li>
+ * <li><code>PUT /contextPath/model/:id</code> with entity: <code>service#save(entity)</code>
+ * 
+ * <ul>
+ * <li>Updates the existing entity.</li>
+ * <li>returns HTTP 200 OK with updated entity (e.g. new id) and <code>Location</code> header with content “/contextPath/model/:id”; or HTTP 400 BAD REQUEST with error information on validation error / if entity's <code>id</code> field is not <code>null</code> nor matches the <code>:id</code> path parameter.</li>
+ * </ul></li>
+ * <li><code>DELETE /contextPath/model</code>: <code>service#deleteAll()</code>
+ * 
+ * <ul>
+ * <li>Deletes all entities of the given type; or deletes all entities of the given type which match all the given query parameters if the global <code>Options#ALLOW_FILTERS</code> flag is set to <code>true</code>. Allowed filters are the same as for <code>GET /contextPath/model</code>.</li>
+ * <li>returns HTTP 204 NO CONTENT; or HTTP 403 FORBIDDEN if the global <code>Options#ALLOW_DELETE_ALL</code> flag is set to <code>false</code>.</li>
+ * </ul></li>
+ * <li><code>DELETE /contextPath/model/:id</code>: <code>service#delete(id)</code>
+ * 
+ * <ul>
+ * <li>Deletes the entity with the id provided or does nothing if no entity with the id provided exists.</li>
+ * <li>returns HTTP 204 NO CONTENT.</li>
+ * </ul></li>
  * </ul>
  * <p>
  * In order to create a CRUD REST service endpoint for an entity type, make sure the entity
