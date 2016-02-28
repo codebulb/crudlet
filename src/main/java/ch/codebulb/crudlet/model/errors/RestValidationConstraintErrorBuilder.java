@@ -65,6 +65,7 @@ public class RestValidationConstraintErrorBuilder extends RestErrorBuilder {
         while (i.hasNext()) {
             current = i.next();
         }
+        // Use '.' as the key if the entire object is erroneous
         if ("arg0".equals(current.getName())) {
             return ".";
         }
