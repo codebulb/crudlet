@@ -347,7 +347,7 @@ You can e.g. use a `@Startup` `@Singleton` EJB bean to manipulate the following 
 * `Options#CORS`: Disable the allow-all "preflight" CORS request filter as well as the allow-all CORS response filter.
 * `Options#RETURN_EXCEPTION_BODY`: Disable user-friendly exception output.
 * `Options#ALLOW_DELETE_ALL`: Disable "DELETE ALL" service endpoint.
-* `Options#ALLOW_FILTERS`: Disable GET filter by query parameter functionality.
+* `Options#ALLOW_FILTERS`: Disable filter by query parameter functionality.
 * `Options#ALLOW_COUNT`: Disable "GET COUNT" service endpoint.
 
 ## Project status and future plans
